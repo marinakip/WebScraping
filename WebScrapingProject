@@ -88,7 +88,22 @@ profile_response = requests.get("https://github.com/jg-fisher")
 profile_page = profile_response.content
 soup2 = BeautifulSoup(profile_page, "html.parser")
 
-location = soup2.find(attrs={"class": "p-label"})
-#text = article.get_text()
-print(location.text)
+location = (soup2.find(attrs={"class": "p-label"})).text
+
+name = (soup2.find(attrs={"class": "p-name vcard-fullname d-block overflow-hidden"})).text
+nickname = (soup2.find(attrs={"class": "p-nickname vcard-username d-block"})).text
+bio = (soup2.find(attrs={"class": "p-note user-profile-bio mb-3 js-user-profile-bio f4"})).text
+stats = soup2.find_all(attrs={"class": "link-gray no-underline no-wrap"})
+stats_list = []
+for stat in stats:
+    text = stat.get_text().strip().split("\n")
+    stats_list.append(text)
+
+contributions = ((soup2.find(attrs={"class": "f4 text-normal mb-2"})).text).strip()
+print(name)
+print(nickname)
+print(bio)
+print(location)
+print(stats_list)
+print(contributions)
 print("=========================")
