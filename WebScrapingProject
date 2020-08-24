@@ -1,0 +1,94 @@
+import requests
+#import pandas as pd
+from bs4 import BeautifulSoup
+
+webpage_response = requests.get("https://github.com/search?q=diabetes")
+webpage = webpage_response.content
+soup = BeautifulSoup(webpage, "html.parser")
+
+print("=========================")
+print("DISCRIPTION\n") #p class TODO find empty descriptions
+discription_list = []
+discription = soup.find_all(attrs={"class": "mb-1"})
+for dis in discription:
+  discription_text = dis.get_text().strip()
+  discription_list.append(discription_text)
+  if not discription_text:
+    print("NO DESCRIPTION AVAILABLE")  #DOESN'T WORK
+  print(discription_text)
+print("=========================")
+
+print("LINKS\n")
+links_list = []
+for link in soup.find_all("a", class_="v-align-middle"):
+    print(link.get('href'))
+    links_list.append(link.get('href'))
+print("=========================")
+
+print("STARS\n")
+stars_list = []
+stars = soup.find_all(attrs={"class": "muted-link"})
+for star in stars:
+  stars_text = star.get_text().split()
+  print(stars_text)
+  stars_list.append(stars_text)
+print("=========================")
+
+print("INFO\n")
+infos_list = []
+infos =soup.find_all("div", class_="mr-3")
+for info in infos:
+  print(info.get_text().strip())
+  infos_list.append(info.get_text().strip())
+print("=========================")
+
+print("PAGE LINKS\n")
+page_links_list = []
+page_links = soup.find_all("div", attrs={"class": "d-flex d-md-inline-block pagination"})
+pages = page_links[0].find_all("a")
+for i in pages:
+  url = i.get('href')
+  print(str(url))
+  page_links_list.append(url) #TODO remove last link because is page2
+print("=========================")
+print("=========================")
+print("PARSING NEW SOUP FOR REPOS....\n")
+
+#Scraping a Repository  TODO for all reposirories list
+repository_response = requests.get("https://github.com/jg-fisher/diabetesNeuralNetwork")
+repository = repository_response.content
+soup2 = BeautifulSoup(repository, "html.parser")
+
+article = soup2.find("p", attrs={"class": "f4 mb-3"})
+article_list = []
+text = article.get_text()
+print(text)
+article_list.append(text)
+
+print("=========================")
+profile = soup2.find("a", attrs={"class": "url fn"})
+print(profile.get('href'))
+
+print("=========================")
+stars_repo = soup2.find(attrs={"class": "link-gray no-underline mr-3"})
+print(stars_repo.get_text().strip())
+
+print("=========================")
+forks_repo = soup2.find(attrs={"class": "link-gray no-underline"})
+print(forks_repo.get_text().strip())
+
+print("=========================")
+print("=========================")
+print("PARSING NEW SOUP FOR PROFILE....\n")
+
+
+
+#Scraping a Profile  TODO for all profiles list
+profile_response = requests.get("https://github.com/jg-fisher")
+profile_page = profile_response.content
+soup2 = BeautifulSoup(profile_page, "html.parser")
+
+location = soup2.find(attrs={"class": "p-label"})
+#text = article.get_text()
+print(location.text)
+print("=========================")
