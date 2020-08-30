@@ -1,109 +1,153 @@
 import requests
-#import pandas as pd
+# import pandas as pd
 from bs4 import BeautifulSoup
 
-webpage_response = requests.get("https://github.com/search?q=diabetes")
-webpage = webpage_response.content
-soup = BeautifulSoup(webpage, "html.parser")
 
-print("=========================")
-print("DISCRIPTION\n") #p class TODO find empty descriptions
-discription_list = []
-discription = soup.find_all(attrs={"class": "mb-1"})
-for dis in discription:
-  discription_text = dis.get_text().strip()
-  discription_list.append(discription_text)
-  if not discription_text:
-    print("NO DESCRIPTION AVAILABLE")  #DOESN'T WORK
-  print(discription_text)
-print("=========================")
+def scrape_results_page(url):
+    webpage_response = requests.get(url)
+    webpage = webpage_response.content
+    soup = BeautifulSoup(webpage, "html.parser")
 
-print("LINKS\n")
-links_list = []
-for link in soup.find_all("a", class_="v-align-middle"):
-    print(link.get('href'))
-    links_list.append(link.get('href'))
-print("=========================")
+    #print("=========================")
+    #print("DISCRIPTION\n")  # TODO find empty descriptions
+    description_list = []
+    description = soup.find_all(attrs={"class": "mb-1"})
+    for dis in description:
+        description_text = dis.get_text().strip()
+        description_list.append(description_text)
 
-print("STARS\n")
-stars_list = []
-stars = soup.find_all(attrs={"class": "muted-link"})
-for star in stars:
-  stars_text = star.get_text().split()
-  print(stars_text)
-  stars_list.append(stars_text)
-print("=========================")
+    #print("=========================")
 
-print("INFO\n")
-infos_list = []
-infos =soup.find_all("div", class_="mr-3")
-for info in infos:
-  print(info.get_text().strip())
-  infos_list.append(info.get_text().strip())
-print("=========================")
+    #print("LINKS\n")
+    results_list = []
+    for link in soup.find_all("a", class_="v-align-middle"):
+        new_link = "https://github.com" + str(link.get('href'))
+        #print(new_link)
+        results_list.append(new_link)
+    #print("=========================")
 
-print("PAGE LINKS\n")
-page_links_list = []
-page_links = soup.find_all("div", attrs={"class": "d-flex d-md-inline-block pagination"})
-pages = page_links[0].find_all("a")
-for i in pages:
-  url = i.get('href')
-  print(str(url))
-  page_links_list.append(url) #TODO remove last link because is page2
-print("=========================")
-print("=========================")
-print("PARSING NEW SOUP FOR REPOS....\n")
+    #print("STARS\n")
+    stars_list = []
+    stars = soup.find_all(attrs={"class": "muted-link"})
+    for star in stars:
+        stars_text = star.get_text().split()
+        #print(stars_text)
+        stars_list.append(stars_text)
+    #print("=========================")
 
-#Scraping a Repository  TODO for all reposirories list
-repository_response = requests.get("https://github.com/jg-fisher/diabetesNeuralNetwork")
-repository = repository_response.content
-soup2 = BeautifulSoup(repository, "html.parser")
+    #print("INFO\n")
+    info_list = []
+    info = soup.find_all("div", class_="mr-3")
+    for info in info:
+        #print(info.get_text().strip())
+        info_list.append(info.get_text().strip())
+    #print("=========================")
 
-article = soup2.find("p", attrs={"class": "f4 mb-3"})
-article_list = []
-text = article.get_text()
-print(text)
-article_list.append(text)
-
-print("=========================")
-profile = soup2.find("a", attrs={"class": "url fn"})
-print(profile.get('href'))
-
-print("=========================")
-stars_repo = soup2.find(attrs={"class": "link-gray no-underline mr-3"})
-print(stars_repo.get_text().strip())
-
-print("=========================")
-forks_repo = soup2.find(attrs={"class": "link-gray no-underline"})
-print(forks_repo.get_text().strip())
-
-print("=========================")
-print("=========================")
-print("PARSING NEW SOUP FOR PROFILE....\n")
+    #print("PAGE LINKS\n")
+    page_links_list = []
+    page_links = soup.find_all("div", attrs={"class": "d-flex d-md-inline-block pagination"})
+    pages = page_links[0].find_all("a")
+    for i in pages:
+        url = i.get('href')
+        new_url = "https://github.com" + str(url)
+        #print(new_url)
+        page_links_list.append(new_url)  # TODO remove last link because is page2
+    #print("=========================")
+    return results_list, page_links_list
 
 
+def scrape_repositories(url):
+    #print("=========================")
+    #print("PARSING NEW SOUP FOR REPOS....\n")
+    # Scraping a Repository  TODO for all reposirories list
+    repository_response = requests.get(url)
+    repository = repository_response.content
+    soup2 = BeautifulSoup(repository, "html.parser")
 
-#Scraping a Profile  TODO for all profiles list
-profile_response = requests.get("https://github.com/jg-fisher")
-profile_page = profile_response.content
-soup2 = BeautifulSoup(profile_page, "html.parser")
+    article = soup2.find("p", attrs={"class": "f4 mb-3"})
+    article_list = []
+    try:
+        text = article.get_text()
+    except AttributeError:
+        text = "NONE"
+    ##print(text)
+    article_list.append(text)
 
-location = (soup2.find(attrs={"class": "p-label"})).text
+    #print("=========================")
+    profile = soup2.find("a", attrs={"class": "url fn"})
+    url = profile.get('href')
+    profile_new = "https://github.com" + str(url)
+    #print(profile_new)
 
-name = (soup2.find(attrs={"class": "p-name vcard-fullname d-block overflow-hidden"})).text
-nickname = (soup2.find(attrs={"class": "p-nickname vcard-username d-block"})).text
-bio = (soup2.find(attrs={"class": "p-note user-profile-bio mb-3 js-user-profile-bio f4"})).text
-stats = soup2.find_all(attrs={"class": "link-gray no-underline no-wrap"})
-stats_list = []
-for stat in stats:
-    text = stat.get_text().strip().split("\n")
-    stats_list.append(text)
+    #print("=========================")
+    stars = soup2.find(attrs={"class": "link-gray no-underline mr-3"})
+    stars_repo = stars.get_text().strip()
+    #print(stars_repo)
 
-contributions = ((soup2.find(attrs={"class": "f4 text-normal mb-2"})).text).strip()
-print(name)
-print(nickname)
-print(bio)
-print(location)
-print(stats_list)
-print(contributions)
-print("=========================")
+    #print("=========================")
+    forks = soup2.find(attrs={"class": "link-gray no-underline"})
+    forks_repo = forks.get_text().strip()
+    #print(forks_repo)
+    #print("=========================")
+    return profile_new, stars_repo, forks_repo
+
+
+def scrape_profile(url):
+    #print("=========================")
+    #print("PARSING NEW SOUP FOR PROFILE....\n")
+
+    # Scraping a Profile  TODO for all profiles list
+    profile_response = requests.get(url)
+    profile_page = profile_response.content
+    soup2 = BeautifulSoup(profile_page, "html.parser")
+    try:
+        location = (soup2.find(attrs={"class": "p-label"})).text
+    except AttributeError:
+        location = "NONE"
+    try:
+        name = (soup2.find(attrs={"class": "p-name vcard-fullname d-block overflow-hidden"})).text
+    except AttributeError:
+        name = "NONE"
+    try:
+        nickname = (soup2.find(attrs={"class": "p-nickname vcard-username d-block"})).text
+    except AttributeError:
+        nickname = "NONE"
+    try:
+        bio = (soup2.find(attrs={"class": "p-note user-profile-bio mb-3 js-user-profile-bio f4"})).text
+    except AttributeError:
+        bio = "NONE"
+
+    stats = soup2.find_all(attrs={"class": "link-gray no-underline no-wrap"})
+    stats_list = []
+    for stat in stats:
+        text = stat.get_text().strip().split("\n")
+        stats_list.append(text)
+    try:
+        contributions = ((soup2.find(attrs={"class": "f4 text-normal mb-2"})).text).strip()
+    except AttributeError:
+        contributions = "NONE"
+
+    profile_info = name + "\n" + nickname + "\n" + bio + "\n" + location + "\n" \
+                   + str(stats_list) + "\n" + str(contributions)
+    #print("=========================")
+    return profile_info, location, stats_list, contributions
+
+
+start_url = "https://github.com/search?q=diabetes"
+results_list, page_links_list = scrape_results_page(start_url)
+final_results_list = []
+length = len(results_list)
+for i in range(length):
+    repository_url = results_list[i]
+    profile_url, stars_repo, forks_repo = scrape_repositories(repository_url)
+    profile_info, location, stats_list, contributions = scrape_profile(profile_url)
+    dictionary = {
+        'location': location,
+        'stats_list': stats_list,
+        'contributions': contributions
+    }
+    final_results_list.append(dictionary)
+#print("-------------------------------")
+print("RESULTS...\n")
+print(final_results_list)
+print("LENGTH LIST : " + str(len(final_results_list)))
