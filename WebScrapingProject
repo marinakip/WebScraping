@@ -7,7 +7,7 @@ def scrape_results_page(url):
     webpage_response = requests.get(url)
     webpage = webpage_response.content
     soup = BeautifulSoup(webpage, "html.parser")
-
+    #print("STARTING RESULTS PAGE SCRAPING")
     #print("=========================")
     #print("DISCRIPTION\n")  # TODO find empty descriptions
     description_list = []
@@ -53,10 +53,12 @@ def scrape_results_page(url):
         #print(new_url)
         page_links_list.append(new_url)  # TODO remove last link because is page2
     #print("=========================")
+    #print("END RESULTS PAGE SCRAPING")
     return results_list, page_links_list
 
 
 def scrape_repositories(url):
+    #print("STARTING REPOSITORIES SCRAPING")
     #print("=========================")
     #print("PARSING NEW SOUP FOR REPOS....\n")
     # Scraping a Repository  TODO for all reposirories list
@@ -89,10 +91,12 @@ def scrape_repositories(url):
     forks_repo = forks.get_text().strip()
     #print(forks_repo)
     #print("=========================")
+    #print("END REPOSITORIES SCRAPING")
     return profile_new, stars_repo, forks_repo
 
 
 def scrape_profile(url):
+    #print("STARTING PROFILE SCRAPING")
     #print("=========================")
     #print("PARSING NEW SOUP FOR PROFILE....\n")
 
@@ -130,24 +134,40 @@ def scrape_profile(url):
     profile_info = name + "\n" + nickname + "\n" + bio + "\n" + location + "\n" \
                    + str(stats_list) + "\n" + str(contributions)
     #print("=========================")
+    #print("END PROFILE SCRAPING")
     return profile_info, location, stats_list, contributions
 
 
+def scrape_page(start_url):
+    print("START SCRAPING")
+    results_list, page_links_list = scrape_results_page(start_url)
+    final_results_list = []
+    length = len(results_list)
+    for i in range(length):
+        repository_url = results_list[i]
+        profile_url, stars_repo, forks_repo = scrape_repositories(repository_url)
+        profile_info, location, stats_list, contributions = scrape_profile(profile_url)
+        dictionary = {
+            'location': location,
+            'stats_list': stats_list,
+            'contributions': contributions
+        }
+        final_results_list.append(dictionary)
+    # print("-------------------------------")
+    # print("RESULTS...\n")
+    # print(final_results_list)
+    # print("LENGTH LIST : " + str(len(final_results_list)))
+    print("END SCRAPING")
+    return page_links_list, final_results_list
+
+
 start_url = "https://github.com/search?q=diabetes"
-results_list, page_links_list = scrape_results_page(start_url)
-final_results_list = []
-length = len(results_list)
-for i in range(length):
-    repository_url = results_list[i]
-    profile_url, stars_repo, forks_repo = scrape_repositories(repository_url)
-    profile_info, location, stats_list, contributions = scrape_profile(profile_url)
-    dictionary = {
-        'location': location,
-        'stats_list': stats_list,
-        'contributions': contributions
-    }
-    final_results_list.append(dictionary)
-#print("-------------------------------")
-print("RESULTS...\n")
-print(final_results_list)
-print("LENGTH LIST : " + str(len(final_results_list)))
+page_links_list, final_results_list = scrape_page(start_url)
+length_page_list = len(page_links_list)
+all_final_results_list = []
+all_final_results_list.append(final_results_list)
+new_scraping_url = page_links_list[0]
+new_page_links_list, new_final_results_list = scrape_page(new_scraping_url)
+all_final_results_list.append(new_final_results_list)
+print(all_final_results_list)
+print("all results length: " + str(len(all_final_results_list)))
