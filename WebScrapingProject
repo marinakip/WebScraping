@@ -156,6 +156,10 @@ while next_page != last_page:
     print("SCRAPING PAGE " + str(count))
     new_final_results_list, new_next_page, last_page = scrape_page(next_page)
     all_final_results_list.append(new_final_results_list)
+    if(count % 15 == 0):
+        dataframe = pd.DataFrame(all_final_results_list)
+        dataframe.to_csv('scraping_results_temp.csv', index=False, header=False)
+        print("CSV TEMP CREATED")
     print("OK")
 print("SCRAPING LAST PAGE")
 last_results_list, next_page, last_page = scrape_page(last_page)
@@ -166,7 +170,7 @@ print("all results length: " + str(len(all_final_results_list)))
 
 dataframe = pd.DataFrame(all_final_results_list)
 dataframe.to_csv('scraping_results.csv', index=False, header=False)
-print("CSV CREATED")
+print("CSV FINAL CREATED")
 
 #------------------- END MAIN ---------------------------------------------------------
 
