@@ -1,67 +1,50 @@
 import requests
 # import pandas as pd
 from bs4 import BeautifulSoup
+import time
 
 
 def scrape_results_page(url):
     webpage_response = requests.get(url)
     webpage = webpage_response.content
     soup = BeautifulSoup(webpage, "html.parser")
-    #print("STARTING RESULTS PAGE SCRAPING")
-    #print("=========================")
-    #print("DISCRIPTION\n")  # TODO find empty descriptions
-    description_list = []
+
+    description_list = []  # TODO find empty descriptions
     description = soup.find_all(attrs={"class": "mb-1"})
     for dis in description:
         description_text = dis.get_text().strip()
         description_list.append(description_text)
 
-    #print("=========================")
-
-    #print("LINKS\n")
     results_list = []
     for link in soup.find_all("a", class_="v-align-middle"):
         new_link = "https://github.com" + str(link.get('href'))
-        #print(new_link)
         results_list.append(new_link)
-    #print("=========================")
 
-    #print("STARS\n")
     stars_list = []
     stars = soup.find_all(attrs={"class": "muted-link"})
     for star in stars:
         stars_text = star.get_text().split()
-        #print(stars_text)
         stars_list.append(stars_text)
-    #print("=========================")
 
-    #print("INFO\n")
     info_list = []
     info = soup.find_all("div", class_="mr-3")
     for info in info:
-        #print(info.get_text().strip())
         info_list.append(info.get_text().strip())
-    #print("=========================")
 
-    #print("PAGE LINKS\n")
     page_links_list = []
     page_links = soup.find_all("div", attrs={"class": "d-flex d-md-inline-block pagination"})
     pages = page_links[0].find_all("a")
     for i in pages:
         url = i.get('href')
         new_url = "https://github.com" + str(url)
-        #print(new_url)
         page_links_list.append(new_url)  # TODO remove last link because is page2
-    #print("=========================")
-    #print("END RESULTS PAGE SCRAPING")
-    return results_list, page_links_list
+    next_page = page_links_list[0]
+    last_page = page_links_list[-2]
+    return results_list, next_page, last_page
 
 
 def scrape_repositories(url):
-    #print("STARTING REPOSITORIES SCRAPING")
-    #print("=========================")
-    #print("PARSING NEW SOUP FOR REPOS....\n")
-    # Scraping a Repository  TODO for all reposirories list
+    # TODO for all repositories list
     repository_response = requests.get(url)
     repository = repository_response.content
     soup2 = BeautifulSoup(repository, "html.parser")
@@ -72,35 +55,29 @@ def scrape_repositories(url):
         text = article.get_text()
     except AttributeError:
         text = "NONE"
-    ##print(text)
     article_list.append(text)
 
-    #print("=========================")
     profile = soup2.find("a", attrs={"class": "url fn"})
     url = profile.get('href')
     profile_new = "https://github.com" + str(url)
-    #print(profile_new)
 
-    #print("=========================")
+
     stars = soup2.find(attrs={"class": "link-gray no-underline mr-3"})
-    stars_repo = stars.get_text().strip()
-    #print(stars_repo)
+    try:
+        stars_repo = stars.get_text().strip()
+    except AttributeError:
+        stars_repo = "NONE"
 
-    #print("=========================")
     forks = soup2.find(attrs={"class": "link-gray no-underline"})
-    forks_repo = forks.get_text().strip()
-    #print(forks_repo)
-    #print("=========================")
-    #print("END REPOSITORIES SCRAPING")
+    try:
+        forks_repo = forks.get_text().strip()
+    except AttributeError:
+        forks_repo = "NONE"
     return profile_new, stars_repo, forks_repo
 
 
 def scrape_profile(url):
-    #print("STARTING PROFILE SCRAPING")
-    #print("=========================")
-    #print("PARSING NEW SOUP FOR PROFILE....\n")
-
-    # Scraping a Profile  TODO for all profiles list
+    # TODO for all profiles list
     profile_response = requests.get(url)
     profile_page = profile_response.content
     soup2 = BeautifulSoup(profile_page, "html.parser")
@@ -133,19 +110,24 @@ def scrape_profile(url):
 
     profile_info = name + "\n" + nickname + "\n" + bio + "\n" + location + "\n" \
                    + str(stats_list) + "\n" + str(contributions)
-    #print("=========================")
-    #print("END PROFILE SCRAPING")
     return profile_info, location, stats_list, contributions
 
 
 def scrape_page(start_url):
-    print("START SCRAPING")
-    results_list, page_links_list = scrape_results_page(start_url)
+    #print("START SCRAPING")
+    results_list, next_page, last_page = scrape_results_page(start_url)
     final_results_list = []
     length = len(results_list)
     for i in range(length):
         repository_url = results_list[i]
         profile_url, stars_repo, forks_repo = scrape_repositories(repository_url)
+        if profile_url == "NONE":
+            dictionary = {
+                'location': "NONE",
+                'stats_list': "NONE",
+                'contributions': "NONE"
+            }
+            final_results_list.append(dictionary)
         profile_info, location, stats_list, contributions = scrape_profile(profile_url)
         dictionary = {
             'location': location,
@@ -153,21 +135,42 @@ def scrape_page(start_url):
             'contributions': contributions
         }
         final_results_list.append(dictionary)
-    # print("-------------------------------")
-    # print("RESULTS...\n")
-    # print(final_results_list)
-    # print("LENGTH LIST : " + str(len(final_results_list)))
-    print("END SCRAPING")
-    return page_links_list, final_results_list
+    #print("END SCRAPING")
+    return final_results_list, next_page, last_page
 
+
+#start_time = time.time()
+#------------------- MAIN -------------------------------------------------------------
 
 start_url = "https://github.com/search?q=diabetes"
-page_links_list, final_results_list = scrape_page(start_url)
-length_page_list = len(page_links_list)
-all_final_results_list = []
-all_final_results_list.append(final_results_list)
-new_scraping_url = page_links_list[0]
-new_page_links_list, new_final_results_list = scrape_page(new_scraping_url)
-all_final_results_list.append(new_final_results_list)
+print("SCRAPING PAGE 1")
+final_results_list, next_page, last_page = scrape_page(start_url)
+all_final_results_list = [final_results_list]  # results of one page
+count = 1
+print("OK")
+while next_page != last_page:
+    count += 1
+    if(count % 4 == 0):
+        print("SLEEP")
+        time.sleep(30)
+    print("SCRAPING PAGE " + str(count))
+    new_final_results_list, new_next_page, last_page = scrape_page(next_page)
+    all_final_results_list.append(new_final_results_list)
+    print("OK")
+print("SCRAPING LAST PAGE")
+last_results_list, next_page, last_page = scrape_page(last_page)
+all_final_results_list.append(last_results_list)
+
 print(all_final_results_list)
 print("all results length: " + str(len(all_final_results_list)))
+
+#------------------- END MAIN ---------------------------------------------------------
+
+
+#print("TIME OF EXECUTION --- %s seconds ---" % (time.time() - start_time))
+
+# #--------------------- TEST CODE ------------------------------------------------------
+# final_results_list, next_page, last_page = scrape_page("https://github.com/search?p=5&q=diabetes&type=Repositories")
+# print(final_results_list)
+# print("length: " + str(len(final_results_list)))
+# #---------------------- END TEST CODE ---------------------------------------------------
