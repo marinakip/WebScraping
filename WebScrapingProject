@@ -2,6 +2,10 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 import time
+import datetime
+import random
+
+
 
 
 def scrape_results_page(url):
@@ -38,8 +42,10 @@ def scrape_results_page(url):
         url = i.get('href')
         new_url = "https://github.com" + str(url)
         page_links_list.append(new_url)  # TODO remove last link because is page2
-    next_page = page_links_list[0]
+    next_page = page_links_list[-1]
     last_page = page_links_list[-2]
+    #print("NEXT: " +str(next_page))
+    #print("LAST: " + str(last_page))
     return results_list, next_page, last_page
 
 
@@ -121,13 +127,6 @@ def scrape_page(start_url):
     for i in range(length):
         repository_url = results_list[i]
         profile_url, stars_repo, forks_repo = scrape_repositories(repository_url)
-        if profile_url == "NONE":
-            dictionary = {
-                'location': "NONE",
-                'stats_list': "NONE",
-                'contributions': "NONE"
-            }
-            final_results_list.append(dictionary)
         profile_info, location, stats_list, contributions = scrape_profile(profile_url)
         dictionary = {
             'location': location,
@@ -150,13 +149,21 @@ count = 1
 print("OK")
 while next_page != last_page:
     count += 1
-    if(count % 3 == 0):
-        print("SLEEP")
-        time.sleep(30)
+    #duration = time.time() - start_time
+    if datetime.datetime.now().minute % 3 == 0:
+        print("TIME : " +str(datetime.datetime.now().minute))
+        print("SLEEP for %s", )
+        secs = random.randint(20, 60)
+        print("SLEEP for ", +str(secs))
+        time.sleep(secs)
+    # if count % 5 == 0:
+    #     print("SLEEP")
+    #     time.sleep(60)
     print("SCRAPING PAGE " + str(count))
     new_final_results_list, new_next_page, last_page = scrape_page(next_page)
     all_final_results_list.append(new_final_results_list)
-    if(count % 15 == 0):
+    next_page = new_next_page
+    if(count % 10 == 0):
         dataframe = pd.DataFrame(all_final_results_list)
         dataframe.to_csv('scraping_results_temp.csv', index=False, header=False)
         print("CSV TEMP CREATED")
