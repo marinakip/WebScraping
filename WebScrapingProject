@@ -148,11 +148,13 @@ def scrape_page(start_url):
     #print("START SCRAPING")
     results_list, next_page, last_page = scrape_results_page(start_url)
     final_results_list = []
+    addresses = []
     length = len(results_list)
     for i in range(length):
         repository_url = results_list[i]
         profile_url, stars_repo, forks_repo = scrape_repositories(repository_url)
         profile_info, location, stats_list, contributions = scrape_profile(profile_url)
+        addresses.append(location)
         dictionary = {
             'location': location,
             'stats_list': stats_list,
@@ -160,18 +162,19 @@ def scrape_page(start_url):
         }
         final_results_list.append(dictionary)
     #print("END SCRAPING")
-    return final_results_list, next_page, last_page
+    return final_results_list, next_page, last_page, addresses
 
 
 start_time = time.time()
 #print("Time: " + str(datetime.datetime.now().minute))
 #------------------- MAIN -------------------------------------------------------------
 
-start_url = "https://github.com/search?q=diabetes"
-#start_url = "https://github.com/search?p=91&q=diabetes&type=Repositories"
+#start_url = "https://github.com/search?q=diabetes"
+start_url = "https://github.com/search?p=85&q=diabetes&type=Repositories"
 print("SCRAPING PAGE 1")
-final_results_list, next_page, last_page = scrape_page(start_url)
+final_results_list, next_page, last_page, addresses = scrape_page(start_url)
 all_final_results_list = [final_results_list]  # results of one page
+final_addresses = [addresses]
 count = 1
 print("OK")
 while next_page != last_page:
@@ -182,26 +185,35 @@ while next_page != last_page:
     #     secs = random.randint(20, 60)
     #     print("SLEEP " + str(secs))
     #     time.sleep(secs)
-    # if count % 4 == 0:
-    #     print("SLEEP")
-    #     secs = random.randint(20, 60)
-    #     print("SLEEP " + str(secs))
-    #     time.sleep(secs)
+    if count % 3 == 0:
+        print("SLEEP")
+        secs = random.randint(20, 60)
+        print("SLEEP " + str(secs))
+        time.sleep(secs)
     print("SCRAPING PAGE " + str(count))
-    new_final_results_list, new_next_page, last_page = scrape_page(next_page)
+    new_final_results_list, new_next_page, last_page, addresses = scrape_page(next_page)
+    final_addresses.append(addresses)
     all_final_results_list.append(new_final_results_list)
     next_page = new_next_page
-    if(count % 10 == 0):
+    if(count % 4 == 0):
+        dataframe_addresses = pd.DataFrame(final_addresses)
+        dataframe_addresses.to_csv('addresses_temp.csv', index=False, header=False)
+        print("CSV ADDRESSES TEMP CREATED")
+
         dataframe = pd.DataFrame(all_final_results_list)
         dataframe.to_csv('scraping_results_temp.csv', index=False, header=False)
         print("CSV TEMP CREATED")
     print("OK")
 print("SCRAPING LAST PAGE")
-last_results_list, next_page, last_page = scrape_page(last_page)
+last_results_list, next_page, last_page, addresses = scrape_page(last_page)
+final_addresses.append(addresses)
 all_final_results_list.append(last_results_list)
 
 #print(all_final_results_list)
 print("all results length: " + str(len(all_final_results_list)))
+
+dataframe_addresses = pd.DataFrame(final_addresses)
+dataframe_addresses.to_csv('addresses_all.csv', index=False, header=False)
 
 dataframe = pd.DataFrame(all_final_results_list)
 dataframe.to_csv('scraping_results.csv', index=False, header=False)
@@ -212,8 +224,4 @@ print("CSV FINAL CREATED")
 
 print("TIME OF EXECUTION --- %s seconds ---" % (time.time() - start_time))
 
-# #--------------------- TEST CODE ------------------------------------------------------
-# final_results_list, next_page, last_page = scrape_page("https://github.com/search?p=5&q=diabetes&type=Repositories")
-# print(final_results_list)
-# print("length: " + str(len(final_results_list)))
-# #---------------------- END TEST CODE ---------------------------------------------------
+
