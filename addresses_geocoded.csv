@@ -1,0 +1,364 @@
+,Address,Latitude,Longitude
+0,"['Barkhamsted, CT']",NONE,NONE
+1,['Athens'],NONE,NONE
+2,"['Hyderabad, India']",NONE,NONE
+3,"['New Delhi, India']",NONE,NONE
+4,"['Zhejiang,China']",NONE,NONE
+5,['Planet Earth'],NONE,NONE
+6,"['Changchun, Jilin']",NONE,NONE
+7,"['Islamabad, Pakistan']",NONE,NONE
+8,['New York'],NONE,NONE
+9,"['Munich, Germany']",NONE,NONE
+10,"['Shenzhen, China']",NONE,NONE
+11,['Montreal'],NONE,NONE
+12,"['Accra,Ghana']",NONE,NONE
+13,"['Pune, India']",NONE,NONE
+14,['CA'],NONE,NONE
+15,"['Tehran, Iran ']",NONE,NONE
+16,['Blumenau'],NONE,NONE
+17,"['Poland, Kraków']",NONE,NONE
+18,['Gurgaon'],NONE,NONE
+19,"['Jaipur,Rajasthan']",NONE,NONE
+20,['United Kingdom'],NONE,NONE
+21,['Kraków'],NONE,NONE
+22,['India'],NONE,NONE
+23,['london UK'],NONE,NONE
+24,['Bangalore'],NONE,NONE
+25,['KITALE'],NONE,NONE
+26,"['Wales, UK']",NONE,NONE
+27,"['London, UK']",NONE,NONE
+28,"['Serbia,  Belgrade']",NONE,NONE
+29,"['Mbarara, Uganda']",NONE,NONE
+30,"['Birmingham, AL']",NONE,NONE
+31,"['Brasília, Brazil']",NONE,NONE
+32,"['Birmingham, AL']",NONE,NONE
+33,['New York City'],NONE,NONE
+34,['Auckland'],NONE,NONE
+35,"['Yardley, PA']",NONE,NONE
+36,['Western Mass'],NONE,NONE
+37,"['Paderborn, Germany']",NONE,NONE
+38,['San Francisco'],NONE,NONE
+39,['Boston'],NONE,NONE
+40,"['Charlotte, NC']",NONE,NONE
+41,['Seattle'],NONE,NONE
+42,"['Portland, OR']",NONE,NONE
+43,"['London, Ontario']",NONE,NONE
+44,"['Philadelphia, PA']",NONE,NONE
+45,"['Berlin, Germany']",NONE,NONE
+46,['Kochi'],NONE,NONE
+47,['Hyderabad'],NONE,NONE
+48,['United Kingdom'],NONE,NONE
+49,"['Chittagong, Bangladesh']",NONE,NONE
+50,"['Milan,Italy']",NONE,NONE
+51,"['Syracuse, New York']",NONE,NONE
+52,"['Syracuse, New York']",NONE,NONE
+53,['Nigeria'],NONE,NONE
+54,['Moscow'],NONE,NONE
+55,"['Leeds, West Riding, UK']",NONE,NONE
+56,"['Chicago, IL']",NONE,NONE
+57,['Oslo Norway'],NONE,NONE
+58,['Toronto'],NONE,NONE
+59,"['Bangalore, India']",NONE,NONE
+60,"['Canada, Edmonton,AB']",NONE,NONE
+61,['Casablanca'],NONE,NONE
+62,['Finland'],NONE,NONE
+63,"['Austin, TX']",NONE,NONE
+64,['Mexico'],NONE,NONE
+65,['Bangalore'],NONE,NONE
+66,['Malaysia'],NONE,NONE
+67,"['Dhaka, Bangladesh']",NONE,NONE
+68,['London'],NONE,NONE
+69,"['New Delhi, India']",NONE,NONE
+70,['Frankfurt am Main'],NONE,NONE
+71,"['Surabaya, Indonesia']",NONE,NONE
+72,['Istanbul/Turkey'],NONE,NONE
+73,['Stoke on Trent. UK'],NONE,NONE
+74,['New York'],NONE,NONE
+75,['soon: NYC'],NONE,NONE
+76,['Hamburg/ Germany'],NONE,NONE
+77,['Kolkata'],NONE,NONE
+78,"['Oulu, Finland. ']",NONE,NONE
+79,"['Mumbai, India']",NONE,NONE
+80,['Hamburg'],NONE,NONE
+81,['Pune'],NONE,NONE
+82,"['Lagos,Nigeria']",NONE,NONE
+83,['Pune'],NONE,NONE
+84,['São Paulo'],NONE,NONE
+85,"['Minneapolis, MN']",NONE,NONE
+86,"['Pune , Maharastra']",NONE,NONE
+87,"['Plainsboro, New Jersey']",NONE,NONE
+88,['bangalore'],NONE,NONE
+89,['beijing'],NONE,NONE
+90,['India'],NONE,NONE
+91,"['Jakarta, Indonesia']",NONE,NONE
+92,['london UK'],NONE,NONE
+93,"['Kathmandu, Nepal']",NONE,NONE
+94,['glasgow'],NONE,NONE
+95,['Paris'],NONE,NONE
+96,['Faculty of Engineering - University of Moratuwa'],NONE,NONE
+97,['Nepal'],NONE,NONE
+98,"['Cuiabá, MT']",NONE,NONE
+99,['Mbarara'],NONE,NONE
+100,['Lavras-MG'],NONE,NONE
+101,['India'],NONE,NONE
+102,"['Edsbyn, Sweden ']",NONE,NONE
+103,['San Francisco'],NONE,NONE
+104,"['Kolkata, West Bengal, India']",NONE,NONE
+105,['Nigeria'],NONE,NONE
+106,"['Rosenheim, Germany']",NONE,NONE
+107,"['Dublin, Ireland']",NONE,NONE
+108,"['Toronto, canada']",NONE,NONE
+109,['Germany'],NONE,NONE
+110,"['Pokhara, Nepal']",NONE,NONE
+111,"['Cuttack , Odisha , India']",NONE,NONE
+112,"['Oakland, CA']",NONE,NONE
+113,['Singapore'],NONE,NONE
+114,"['New Delhi, India']",NONE,NONE
+115,['Mumbai'],NONE,NONE
+116,"['Washington, DC']",NONE,NONE
+117,['The Netherlands'],NONE,NONE
+118,"['Helsinki, Finland.']",NONE,NONE
+119,['Joypurhat'],NONE,NONE
+120,['Ireland'],NONE,NONE
+121,['California'],NONE,NONE
+122,"['Tokyo, Japan']",NONE,NONE
+123,['Pune'],NONE,NONE
+124,"['Chicago, IL']",NONE,NONE
+125,"['kathmandu,Nepal']",NONE,NONE
+126,['Toronto'],NONE,NONE
+127,"['Razole ,East Godavari, Andhra Pradesh']",NONE,NONE
+128,"['Castle Rock, CO']",NONE,NONE
+129,"['Medellin, Colombia']",NONE,NONE
+130,"['Paris, France']",NONE,NONE
+131,['Berlin'],NONE,NONE
+132,"['columbia, Missouri']",NONE,NONE
+133,['Barcelona'],NONE,NONE
+134,['israel'],NONE,NONE
+135,"['Mooresville, Indiana']",NONE,NONE
+136,['Indonesia'],NONE,NONE
+137,['Bangalore'],NONE,NONE
+138,['San Francisco'],NONE,NONE
+139,['San Francisco'],NONE,NONE
+140,['Ghana'],NONE,NONE
+141,['San Francisco'],NONE,NONE
+142,"['Stanford, CA']",NONE,NONE
+143,['beijing'],NONE,NONE
+144,['Italy'],NONE,NONE
+145,['Lagos'],NONE,NONE
+146,"['Accra,Ghana']",NONE,NONE
+147,['Knoxville'],NONE,NONE
+148,"['Kolkata, West Bengal, India']",NONE,NONE
+149,"['Irvine, CA']",NONE,NONE
+150,['Bangalore'],NONE,NONE
+151,['Pakistan'],NONE,NONE
+152,"['Paris, France']",NONE,NONE
+153,['sector 35 b chandighar'],NONE,NONE
+154,['India'],NONE,NONE
+155,"['Syracuse, New York, US']",NONE,NONE
+156,['Pune'],NONE,NONE
+157,['Belo Horizonte'],NONE,NONE
+158,"['Budapest, Hungary']",NONE,NONE
+159,"['Cairo, Egypt']",NONE,NONE
+160,"['Chittagong, Bangladesh']",NONE,NONE
+161,['Ireland'],NONE,NONE
+162,"['Bangalore, India']",NONE,NONE
+163,['Mumbai'],NONE,NONE
+164,['United Kingdom'],NONE,NONE
+165,['delhi'],NONE,NONE
+166,"['Jaipur,Rajasthan']",NONE,NONE
+167,['HYDERABAD'],NONE,NONE
+168,['Madrid'],NONE,NONE
+169,['Mumbai | India'],NONE,NONE
+170,['Hamburg/ Germany'],NONE,NONE
+171,['Ankara'],NONE,NONE
+172,"['Manchester, UK']",NONE,NONE
+173,"['Wrocław, PL']",NONE,NONE
+174,['Delhi'],NONE,NONE
+175,['India'],NONE,NONE
+176,['Hyderabad'],NONE,NONE
+177,['Egypt'],NONE,NONE
+178,"['Bengaluru, India']",NONE,NONE
+179,"['Waterloo, ON']",NONE,NONE
+180,['Singapore'],NONE,NONE
+181,['Shanghai'],NONE,NONE
+182,"['Austin, TX']",NONE,NONE
+183,"['Hangzhou, China']",NONE,NONE
+184,"['Pune, India']",NONE,NONE
+185,"['Utrecht, NL']",NONE,NONE
+186,"['Nottingham, United Kingdom']",NONE,NONE
+187,"['Dhaka, Bangladesh']",NONE,NONE
+188,"['San Jose, CA']",NONE,NONE
+189,['Bangalore'],NONE,NONE
+190,['Mumbai'],NONE,NONE
+191,"['Vancouver, Canada']",NONE,NONE
+192,['Hong Kong'],NONE,NONE
+193,"['Anantapur,Andhrapradesh']",NONE,NONE
+194,"['Dublin, Ireland']",NONE,NONE
+195,"['Markhan, ON']",NONE,NONE
+196,"['Milwaukee, WI']",NONE,NONE
+197,"['León, Guanajuato, México']",NONE,NONE
+198,"['New York, NY']",NONE,NONE
+199,['Tromsø'],NONE,NONE
+200,"['Panjab University, Chandigarh']",NONE,NONE
+201,"['Mumbai, India']",NONE,NONE
+202,['Pittsburg CA'],NONE,NONE
+203,['Hyderabad'],NONE,NONE
+204,['Mumbai'],NONE,NONE
+205,['Fran Sancisco'],NONE,NONE
+206,['HYDERABAD'],NONE,NONE
+207,['Bengaluru'],NONE,NONE
+208,['Mumbai'],NONE,NONE
+209,"['San Diego, CA']",NONE,NONE
+210,"['London, UK']",NONE,NONE
+211,['Canada'],NONE,NONE
+212,"['Bethpage, NY']",NONE,NONE
+213,['India'],NONE,NONE
+214,['Hyderabad'],NONE,NONE
+215,['Frankfurt am Main'],NONE,NONE
+216,['Karachi Pakistan'],NONE,NONE
+217,"['Ranchi, Jharkhand']",NONE,NONE
+218,['North America'],NONE,NONE
+219,"['Dhaka, Bangladesh']",NONE,NONE
+220,['Switzerland'],NONE,NONE
+221,"['Saint Louis, MO']",NONE,NONE
+222,"['Portland, Oregon']",NONE,NONE
+223,['delhi india'],NONE,NONE
+224,['Goiânia - GO'],NONE,NONE
+225,"['Beijing, China']",NONE,NONE
+226,['Chengdu'],NONE,NONE
+227,['The Netherlands'],NONE,NONE
+228,['Israel'],NONE,NONE
+229,['Shanghai'],NONE,NONE
+230,['USA'],NONE,NONE
+231,"['Houston, Texas']",NONE,NONE
+232,"['Seoul, South Korea']",NONE,NONE
+233,"['Berlin, Germany / Hennigsdorf, Germany']",NONE,NONE
+234,"['Greensboro, NC']",NONE,NONE
+235,"['Los Angeles, CA']",NONE,NONE
+236,"['Seattle, WA']",NONE,NONE
+237,"['Hyderabad, India']",NONE,NONE
+238,['Mumbai'],NONE,NONE
+239,"['Seattle, WA']",NONE,NONE
+240,['Fran Sancisco'],NONE,NONE
+241,['beijing'],NONE,NONE
+242,"['Montréal, Canada']",NONE,NONE
+243,"['Banglore,India']",NONE,NONE
+244,['Ukraine'],NONE,NONE
+245,"['Kathmandu, Nepal']",NONE,NONE
+246,['Mumbai'],NONE,NONE
+247,"['Satara, Maharashtra']",NONE,NONE
+248,"['Sydney, Australia']",NONE,NONE
+249,['Hong Kong'],NONE,NONE
+250,['Perth'],NONE,NONE
+251,"['Cuiabá, MT']",NONE,NONE
+252,['Nigeria'],NONE,NONE
+253,['United States'],NONE,NONE
+254,"['La Crosse, WI']",NONE,NONE
+255,"['Nairobi, Kenya']",NONE,NONE
+256,['Nigeria'],NONE,NONE
+257,"['Edsbyn, Sweden ']",NONE,NONE
+258,['India'],NONE,NONE
+259,['San Francisco'],NONE,NONE
+260,"['Washington, DC']",NONE,NONE
+261,['BeiJing'],NONE,NONE
+262,"['San Luis Potosi, Mexico']",NONE,NONE
+263,"['Mountain View, CA']",NONE,NONE
+264,"['Toronto, Canada']",NONE,NONE
+265,['India'],NONE,NONE
+266,['Bengaluru'],NONE,NONE
+267,"['Salt Lake City, UT']",NONE,NONE
+268,['Japan'],NONE,NONE
+269,['CA'],NONE,NONE
+270,['Nairobi Kenya'],NONE,NONE
+271,"['Swansea, Wales, United Kingdom']",NONE,NONE
+272,['India'],NONE,NONE
+273,"['Bangalore, India']",NONE,NONE
+274,"['Portland, Oregon']",NONE,NONE
+275,['bangalore'],NONE,NONE
+276,"['Seattle, WA']",NONE,NONE
+277,"['Banglore,India']",NONE,NONE
+278,['Mumbai'],NONE,NONE
+279,['127.0.0.1'],NONE,NONE
+280,"['Dublin, IRE']",NONE,NONE
+281,"['Alexandria, Egypt']",NONE,NONE
+282,"['Auckland, New Zealand']",NONE,NONE
+283,"['Indore, MP, India']",NONE,NONE
+284,['Toronto'],NONE,NONE
+285,"['TOKYO-JAPAN, ROK-SEOUL']",NONE,NONE
+286,['Auckland'],NONE,NONE
+287,['Porto Alegre/RS'],NONE,NONE
+288,['Mumbai'],NONE,NONE
+289,"['Chennai,Tamil Nadu,India']",NONE,NONE
+290,['San Francisco Bay Area'],NONE,NONE
+291,['Bangalore'],NONE,NONE
+292,"['São Paulo, SP Brasil']",NONE,NONE
+293,"['Russia, Armenia']",NONE,NONE
+294,['Chile'],NONE,NONE
+295,['Sri Lanka'],NONE,NONE
+296,['Patna'],NONE,NONE
+297,['Berlin'],NONE,NONE
+298,"['San Francisco, CA']",NONE,NONE
+299,"['Bangalore, India']",NONE,NONE
+300,"['San Francisco, CA']",NONE,NONE
+301,['UK'],NONE,NONE
+302,"['New Delhi, India']",NONE,NONE
+303,"['Tehran, Iran ']",NONE,NONE
+304,['London'],NONE,NONE
+305,['Vancouver'],NONE,NONE
+306,['Boston'],NONE,NONE
+307,['dhaka'],NONE,NONE
+308,['beijing'],NONE,NONE
+309,['Singapore'],NONE,NONE
+310,['Hyderabad'],NONE,NONE
+311,"['Satara, Maharashtra']",NONE,NONE
+312,['India'],NONE,NONE
+313,['Spain'],NONE,NONE
+314,['Texas'],NONE,NONE
+315,"['Missoula, MT']",NONE,NONE
+316,['Shanghai'],NONE,NONE
+317,['Nigeria'],NONE,NONE
+318,"['Edison, New Jersey']",NONE,NONE
+319,"['Charlotte, NC']",NONE,NONE
+320,['Bangladesh'],NONE,NONE
+321,['Izmir / Turkey'],NONE,NONE
+322,"['Chittagong,Bangladesh']",NONE,NONE
+323,"['Mountain View, CA']",NONE,NONE
+324,['Boston'],NONE,NONE
+325,['India'],NONE,NONE
+326,"['San Francisco, CA']",NONE,NONE
+327,['Jamshedpur'],NONE,NONE
+328,"['Russia, Saint Petersburg']",NONE,NONE
+329,"['La Jolla, CA']",NONE,NONE
+330,"['Huntington Beach, CA']",NONE,NONE
+331,['Mclean'],NONE,NONE
+332,"['Warsaw, Poland']",NONE,NONE
+333,['fuzhou'],NONE,NONE
+334,['The Internet'],NONE,NONE
+335,['India'],NONE,NONE
+336,['Shanghai'],NONE,NONE
+337,['Krauschwitz'],NONE,NONE
+338,['India'],NONE,NONE
+339,['Bengaluru'],NONE,NONE
+340,['Gurgaon'],NONE,NONE
+341,"['Durham, North Carolina']",NONE,NONE
+342,['Montreal'],NONE,NONE
+343,"['Bangalore, India']",NONE,NONE
+344,"['Montréal, Canada']",NONE,NONE
+345,"['Jakarta, Indonesia']",NONE,NONE
+346,['Ottawa / Cairo'],NONE,NONE
+347,"['Leeds, West Riding, UK']",NONE,NONE
+348,"['Sousse, Tunisia']",NONE,NONE
+349,['India'],NONE,NONE
+350,['Cotia - São Paulo'],NONE,NONE
+351,['Hyderabad'],NONE,NONE
+352,"['Bethpage, NY']",NONE,NONE
+353,['San Francisco Bay Area'],NONE,NONE
+354,"['Jahangirnagar University, Dhaka, Bangladesh']",NONE,NONE
+355,['Bangladesh'],NONE,NONE
+356,['Toronto'],NONE,NONE
+357,"['chennai,TN,India']",NONE,NONE
+358,"['Chennai, Tamilnadu, India']",NONE,NONE
+359,"['Chittagong,Bangladesh']",NONE,NONE
+360,['Israel'],NONE,NONE
+361,"['Lima, Perú.']",NONE,NONE
+362,['São Paulo - Brasil'],NONE,NONE
