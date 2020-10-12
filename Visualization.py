@@ -27,16 +27,16 @@ for row in range(len(df)):
     #print(address)
     #print(address.to_string())
     locator = Nominatim(user_agent="myGeocoder")
-    geocode = RateLimiter(locator.geocode, min_delay_seconds=2)
+    #geocode = RateLimiter(locator.geocode, min_delay_seconds=2)
     try:
-        location = address.apply(geocode)
-        #location = locator.geocode(address)
+        #location = address.apply(geocode)
+        location = locator.geocode(address, timeout= 30)
         latitude = location.latitude
         longitude = location.longitude
     except AttributeError:
-        location = "NONE"
-        latitude = "NONE"
-        longitude = "NONE"
+        #location = "NONE"
+        latitude = None
+        longitude = None
     #print("Latitude = {}, Longitude = {}".format(location.latitude, location.longitude))
     dictionary = {
         'Address': address,
@@ -44,10 +44,14 @@ for row in range(len(df)):
         'Longitude': longitude
     }
     geocoding_results.append(dictionary)
+    if counter%20 == 0:
+        df_addresses = pd.DataFrame(geocoding_results)
+        df_addresses.to_csv('addresses_geocoded_temp.csv')
+        print("CSV GEOCODING ADDRESSES TEMP CREATED")
 
 df_addresses = pd.DataFrame(geocoding_results)
 df_addresses.to_csv('addresses_geocoded.csv')
-print("CSV GEOCODING ADDRESSES TEMP CREATED")
+print("CSV GEOCODING ADDRESSES FINAL CREATED")
 
 
 #
