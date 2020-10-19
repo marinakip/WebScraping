@@ -1,8 +1,5 @@
 from folium.plugins import FastMarkerCluster
-from geopy import Nominatim
 import pandas as pd
-from geopy import Nominatim
-from geopy.extra.rate_limiter import RateLimiter
 import folium
 
 df = pd.read_csv("addresses_geocoded.csv", index_col=0)

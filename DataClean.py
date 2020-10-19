@@ -1,6 +1,6 @@
 import pandas as pd
 import csv
-import numpy as np
+
 
 data = pd.read_csv("addresses_all.csv", header = None)
 #print(data)
