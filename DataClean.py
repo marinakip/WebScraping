@@ -2,7 +2,8 @@ import pandas as pd
 import csv
 
 
-data = pd.read_csv("addresses_all.csv", header = None)
+#data = pd.read_csv("addresses_all.csv", header = None)
+data = pd.read_csv("merged_addresses.csv", header = None)
 #print(data)
 
 df = data.drop(data.columns[-1], axis=1)
