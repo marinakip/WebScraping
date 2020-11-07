@@ -1,30 +1,82 @@
+import time
 import pendulum
+import pandas as pd
+from Scraper import Scraper
 
-def create_start_url():
+def create_start_url(year1, month1, day1, year2, month2, day2):
+    url_list = []
     query = 'diabetes'
-    start = pendulum.datetime(2005, 1, 1)
-    end = pendulum.datetime(2007, 1, 6)
+    start = pendulum.datetime(year1, month1, day1)
+    end = pendulum.datetime(year2, month2, day2)
     period = pendulum.period(start, end)
 
     weeks_list = []
     for dt in period.range('weeks'):
-        date = dt.to_date_string()
-        weeks_list.append(date)
-        print(date)
+        start_week = dt.start_of('week').to_date_string()
+        end_week = dt.end_of('week').to_date_string()
+       #print("START WEEK: " + start_week)
+       #print("END WEEK: " + end_week)
+        week_tuple = (start_week, end_week)
+        weeks_list.append(week_tuple)
+        # print(date)
+
+    #print(weeks_list)
 
     for date in range(len(weeks_list)):
-        start = weeks_list[::2]
-        end = weeks_list[1::2]
-        start = str(start)
-        end = str(end)
-        start_url = "https://github.com/search?utf8=%E2%9C%93&q={}+created%3A{}..{}&type=Repositories".format(query, start,
-                                                                                                            end)
-        return start_url
-#print(len(start))
-#print(len(end))
+        start_date = weeks_list[date][0]
+        end_date = weeks_list[date][1]
+
+        #for i in range(len(start_date)):
+        start_url = "https://github.com/search?utf8=%E2%9C%93&q={}+created%3A{}..{}&type=Repositories" \
+                .format(query, start_date, end_date)
+        #print(start_url)
+        url_list.append(start_url)
+
+    return url_list
 
 
-#start = '2005-01-01'
-#end = '2017-01-01'
+#link_list = create_start_url(2005, 1, 1, 2007, 1, 1)
+link_list = create_start_url(2017, 1, 1, 2018, 1, 1)
+#print(link_list)
 
-#start_url = "https://github.com/search?utf8=%E2%9C%93&q=diabetes+created%3A2005-01-01..2017-01-01&type=Repositories"
+for item in range(len(link_list)):
+    start_url = link_list[item]
+    print(start_url)
+    scraper = Scraper(start_url)
+    #last_page = scraper.scrape_page(start_url)[2]
+    #print("last page: "+str(last_page))
+    count = 1
+    counter = 1
+    print("SCRAPING BATCH NUMBER " + str(count))
+    try:
+        final_results_list, next_page, last_page, addresses, pages_links = scraper.scrape_page(start_url)
+    except ConnectionError:
+        print("Connection Error")
+        time.sleep(30)
+        final_results_list, next_page, last_page, addresses, pages_links = scraper.scrape_page(start_url)
+        continue
+    print(pages_links)
+    if next_page is not None:
+        all_final_results_list = [final_results_list]  # results of one page
+        final_addresses = [addresses]
+        print("OK")
+        while next_page != last_page:
+            counter += 1
+            print("SCRAPING PAGE " + str(count))
+            new_final_results_list, new_next_page, last_page, addresses, pages_links = scraper.scrape_page(next_page)
+            final_addresses.append(addresses)
+            all_final_results_list.append(new_final_results_list)
+            next_page = new_next_page
+            print("OK")
+        print("SCRAPING LAST PAGE")
+        last_results_list, next_page, last_page, addresses, pages_links = scraper.scrape_page(last_page)
+        final_addresses.append(addresses)
+        all_final_results_list.append(last_results_list)
+
+        print("all results length: " + str(len(all_final_results_list)))
+
+        dataframe = pd.DataFrame(all_final_results_list)
+        dataframe.to_csv('scraping_results_new{}.csv'.format(count), index=False, header=False)
+        print("CSV FINAL CREATED")
+
+    count += 1

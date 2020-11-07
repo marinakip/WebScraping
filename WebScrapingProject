@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup
 import time
-import datetime
 import random
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -16,24 +15,10 @@ def scrape_results_page(url):
     session.mount('https://', adapter)
 
     webpage_response = session.get(url, timeout=2.5)
-
-
-    # try:
-    #     webpage_response = requests.get(url, timeout=2.5)
-    #
-    #     if webpage_response.status_code == 429:
-    #         time.sleep(int(webpage_response.headers["Retry-After"]))
-    #
-    #     webpage_response.raise_for_status()
-    # except (ConnectionError, requests.HTTPError):
-    #     print("CONNECTION ERROR, SLEEP 30")
-    #     time.sleep(60)
-
-
     webpage = webpage_response.content
     soup = BeautifulSoup(webpage, "html.parser")
 
-    description_list = []  # TODO find empty descriptions
+    description_list = []
     description = soup.find_all(attrs={"class": "mb-1"})
     for dis in description:
         description_text = dis.get_text().strip()
@@ -61,16 +46,13 @@ def scrape_results_page(url):
     for i in pages:
         url = i.get('href')
         new_url = "https://github.com" + str(url)
-        page_links_list.append(new_url)  # TODO remove last link because is page2
-    next_page = page_links_list[-1]
+        page_links_list.append(new_url)
+    next_page = page_links_list[-1] #last link is page2
     last_page = page_links_list[-2]
-    #print("NEXT: " +str(next_page))
-    #print("LAST: " + str(last_page))
     return results_list, next_page, last_page
 
 
 def scrape_repositories(url):
-    # TODO for all repositories list
     repository_response = requests.get(url)
     repository = repository_response.content
     soup2 = BeautifulSoup(repository, "html.parser")
@@ -92,7 +74,6 @@ def scrape_repositories(url):
 
     profile_new = "https://github.com" + str(url)
 
-
     stars = soup2.find(attrs={"class": "link-gray no-underline mr-3"})
     try:
         stars_repo = stars.get_text().strip()
@@ -108,7 +89,6 @@ def scrape_repositories(url):
 
 
 def scrape_profile(url):
-    # TODO for all profiles list
     profile_response = requests.get(url)
     profile_page = profile_response.content
     soup2 = BeautifulSoup(profile_page, "html.parser")
@@ -135,7 +115,7 @@ def scrape_profile(url):
         text = stat.get_text().strip().split("\n")
         stats_list.append(text)
     try:
-        contributions = ((soup2.find(attrs={"class": "f4 text-normal mb-2"})).text).strip()
+        contributions = (soup2.find(attrs={"class": "f4 text-normal mb-2"})).text.strip()
     except AttributeError:
         contributions = "NONE"
 
@@ -145,7 +125,6 @@ def scrape_profile(url):
 
 
 def scrape_page(start_url):
-    #print("START SCRAPING")
     results_list, next_page, last_page = scrape_results_page(start_url)
     final_results_list = []
     addresses = []
@@ -161,23 +140,19 @@ def scrape_page(start_url):
             'contributions': contributions
         }
         final_results_list.append(dictionary)
-    #print("END SCRAPING")
     return final_results_list, next_page, last_page, addresses
 
 
 start_time = time.time()
-#print("Time: " + str(datetime.datetime.now().minute))
+
 #------------------- MAIN -------------------------------------------------------------
 
 #start_url = "https://github.com/search?q=diabetes"
 #start_url = "https://github.com/search?p=85&q=diabetes&type=Repositories"
 start_url = "https://github.com/search?q=machine+learning"
 #start_url = "https://github.com/search?p=89&q=machine+learning&type=Repositories"
-#start_url = "https://github.com/search?p=71&q=machine+learning&type=Repositories"
-#start_url = "https://github.com/search?utf8=%E2%9C%93&q=diabetes+created%3A2005-01-01..2017-01-01&type=Repositories"
+
 count = 1
-#count = 89
-#count = 71
 print("SCRAPING PAGE " + str(count))
 final_results_list, next_page, last_page, addresses = scrape_page(start_url)
 all_final_results_list = [final_results_list]  # results of one page
@@ -186,12 +161,6 @@ final_addresses = [addresses]
 print("OK")
 while next_page != last_page:
     count += 1
-    duration = time.time() - start_time
-    # if datetime.datetime.now().minute % 3 == 0:
-    #     print("TIME : " +str(datetime.datetime.now().minute))
-    #     secs = random.randint(20, 60)
-    #     print("SLEEP " + str(secs))
-    #     time.sleep(secs)
     if count % 3 == 0:
         print("SLEEP")
         secs = random.randint(20, 60)
@@ -202,7 +171,7 @@ while next_page != last_page:
     final_addresses.append(addresses)
     all_final_results_list.append(new_final_results_list)
     next_page = new_next_page
-    if(count % 4 == 0):
+    if count % 4 == 0:
         dataframe_addresses = pd.DataFrame(final_addresses)
         dataframe_addresses.to_csv('addresses_temp.csv', index=False, header=False)
         print("CSV ADDRESSES TEMP CREATED")
@@ -216,7 +185,6 @@ last_results_list, next_page, last_page, addresses = scrape_page(last_page)
 final_addresses.append(addresses)
 all_final_results_list.append(last_results_list)
 
-#print(all_final_results_list)
 print("all results length: " + str(len(all_final_results_list)))
 
 dataframe_addresses = pd.DataFrame(final_addresses)
