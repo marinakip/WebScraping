@@ -39,15 +39,19 @@ def create_start_url(year1, month1, day1, year2, month2, day2):
 link_list = create_start_url(2017, 1, 1, 2018, 1, 1)
 #print(link_list)
 
+count = 1
+
 for item in range(len(link_list)):
     start_url = link_list[item]
     print(start_url)
     scraper = Scraper(start_url)
     #last_page = scraper.scrape_page(start_url)[2]
     #print("last page: "+str(last_page))
-    count = 1
+
     counter = 1
     print("SCRAPING BATCH NUMBER " + str(count))
+    print("SLEEP SCRAPING BATCH FOR 2secs")
+    time.sleep(3)
     try:
         final_results_list, next_page, last_page, addresses, pages_links = scraper.scrape_page(start_url)
     except ConnectionError:
@@ -78,5 +82,4 @@ for item in range(len(link_list)):
         dataframe = pd.DataFrame(all_final_results_list)
         dataframe.to_csv('scraping_results_new{}.csv'.format(count), index=False, header=False)
         print("CSV FINAL CREATED")
-
     count += 1

@@ -13,6 +13,8 @@ class Scraper:
 
     def scrape_results_page(self, url):
         print("START SCRAPE RESULTS PAGE")
+        print("SLEEP RESULTS PAGE FOR 2secs")
+        time.sleep(2)
         self.start_url = url
         session = requests.Session()
         retry = Retry(connect=3, backoff_factor=0.5)
@@ -67,6 +69,8 @@ class Scraper:
 
     def scrape_repositories(self, url):
         print("START SCRAPE RESPOSITORIES")
+        print("SLEEP REPOSITORIES FOR 2secs")
+        time.sleep(2)
         self.start_url = url
         repository_response = requests.get(url)
         repository = repository_response.content
@@ -104,6 +108,8 @@ class Scraper:
 
     def scrape_profile(self, url):
         print("START SCRAPE PROFILE")
+        print("SLEEP PROFILE FOR 2secs")
+        time.sleep(2)
         self.start_url = url
         profile_response = requests.get(url)
         profile_page = profile_response.content
@@ -141,6 +147,8 @@ class Scraper:
 
     def scrape_page(self, start_url):
         print("START SCRAPE PAGE")
+        print("SLEEP PAGE FOR 2secs")
+        time.sleep(2)
         self.start_url = start_url
         results_list, next_page, last_page, pages_links = self.scrape_results_page(start_url)
         final_results_list = []
