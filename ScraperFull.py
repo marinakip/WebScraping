@@ -35,8 +35,10 @@ def create_start_url(year1, month1, day1, year2, month2, day2):
     return url_list
 
 
-#link_list = create_start_url(2005, 1, 1, 2007, 1, 1)
-link_list = create_start_url(2017, 1, 1, 2018, 1, 1)
+#link_list = create_start_url(2016, 1, 1, 2017, 1, 1)
+#link_list = create_start_url(2017, 1, 1, 2018, 1, 1)
+#link_list = create_start_url(2018, 1, 1, 2019, 1, 1)
+link_list = create_start_url(2019, 1, 1, 2020, 1, 1)
 #print(link_list)
 
 count = 1
