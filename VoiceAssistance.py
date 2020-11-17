@@ -76,7 +76,7 @@ if __name__ == '__main__':
                   'Specific dates,  range of dates')
         elif "specific" in command or "specific dates" in command:
             speak('Please give a specific date')
-        #speak("Do you need something else?")
+        speak("Do you need something else?")
 time.sleep(5)
 
 

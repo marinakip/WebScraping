@@ -3,7 +3,8 @@ from geopy import Nominatim
 import time
 import random
 
-df = pd.read_csv("scraping_results_weighted.csv", header = 0)
+#df = pd.read_csv("scraping_results_weighted.csv", header = 0)
+df = pd.read_csv("scraping_results_cleaned_diabetes_combinedAll_weighted.csv", header = 0)
 #print(df.head(10))
 
 data = df['Location']
@@ -54,7 +55,8 @@ df['Longitude'] = longitude_list
 df['Latitude'] = latitude_list
 
 #df_addresses = pd.DataFrame(geocoding_results)
-df.to_csv('addresses_geocoded_weighted_full.csv', index=False, header=True)
+#df.to_csv('addresses_geocoded_weighted_full.csv', index=False, header=True)
+df.to_csv('scraping_results_cleaned_diabetes_combinedAll_weighted_geocoded.csv', index=False, header=True)
 print("CSV GEOCODING ADDRESSES FINAL CREATED")
 
 

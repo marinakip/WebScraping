@@ -5,7 +5,8 @@ from Scraper import Scraper
 
 def create_start_url(year1, month1, day1, year2, month2, day2):
     url_list = []
-    query = 'diabetes'
+    #query = 'diabetes'
+    query = 'machine+learning'
     start = pendulum.datetime(year1, month1, day1)
     end = pendulum.datetime(year2, month2, day2)
     period = pendulum.period(start, end)
@@ -20,7 +21,7 @@ def create_start_url(year1, month1, day1, year2, month2, day2):
         weeks_list.append(week_tuple)
         # print(date)
 
-    #print(weeks_list)
+    print(weeks_list)
 
     for date in range(len(weeks_list)):
         start_date = weeks_list[date][0]
@@ -34,15 +35,19 @@ def create_start_url(year1, month1, day1, year2, month2, day2):
 
     return url_list
 
-
+#link_list = create_start_url(2015, 1, 1, 2016, 1, 1) #TODO FIX FOR ONE PAGE RESULTS
 #link_list = create_start_url(2016, 1, 1, 2017, 1, 1)
 #link_list = create_start_url(2017, 1, 1, 2018, 1, 1)
 #link_list = create_start_url(2018, 1, 1, 2019, 1, 1)
-link_list = create_start_url(2019, 1, 1, 2020, 1, 1)
+#link_list = create_start_url(2019, 1, 1, 2020, 1, 1)
+#link_list = create_start_url(2020, 1, 1, 2020, 11, 1)
+#link_list = create_start_url(2020, 5, 25, 2020, 11, 1)
+link_list = create_start_url(2016, 7, 11, 2017, 1, 1)
+
 #print(link_list)
 
-count = 1
-
+#count = 1
+count = 28
 for item in range(len(link_list)):
     start_url = link_list[item]
     print(start_url)
@@ -51,8 +56,9 @@ for item in range(len(link_list)):
     #print("last page: "+str(last_page))
 
     counter = 1
+
     print("SCRAPING BATCH NUMBER " + str(count))
-    print("SLEEP SCRAPING BATCH FOR 2secs")
+    print("SLEEP SCRAPING BATCH FOR 3secs")
     time.sleep(3)
     try:
         final_results_list, next_page, last_page, addresses, pages_links = scraper.scrape_page(start_url)
