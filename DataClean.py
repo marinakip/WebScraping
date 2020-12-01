@@ -1,6 +1,7 @@
 import pandas as pd
 import csv
 
+#ONLY FOR ADDRESSES , I DONT NEED THAT ANYMORE
 
 #data = pd.read_csv("addresses_all.csv", header = None)
 data = pd.read_csv("merged_addresses.csv", header = None)

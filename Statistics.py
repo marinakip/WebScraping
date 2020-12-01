@@ -19,8 +19,9 @@ def convertNumber(number):
 
 
 #data = pd.read_csv("merged_scraping_results.csv", header=None)
-data = pd.read_csv("D:\WebScraping\Scraping_Results_Diabetes_Combined\combinedAll.csv", header=None)
-data.drop(data.tail(1).index, inplace=True)
+#data = pd.read_csv("D:\WebScraping\Scraping_Results_Diabetes_Combined\combinedAll.csv", header=None)
+data = pd.read_csv("D:\WebScraping\scraping_results_diabetes_1000_NEW.csv", header=None)
+#data.drop(data.tail(1).index, inplace=True)
 data.fillna('NONE', inplace=True)
 #print(data)
 
@@ -36,6 +37,9 @@ for i in range(len(data.columns)):
             stats = cell_new['stats_list']
             contributions = cell_new['contributions']
             contributions_new = cell_new['contributions'].split()[0]
+            description = cell_new['description']
+            url_profile = cell_new['url_profile']
+            info = cell_new['info_list']
   #          print("Location: " + location)
   #          print("Stats: " + str(stats))
             try:
@@ -67,14 +71,16 @@ for i in range(len(data.columns)):
             contributions = convertNumber(contributions_new)
  #           print("Contributions:" + str(contributions))
   #          print("=============================")
-            line = (location, followers, following, stars, contributions)
+            line = (location, followers, following, stars, contributions, description, url_profile, info)
             list.append(line)
 
-df = pd.DataFrame(list, columns=['Location', 'Followers', 'Following', 'Stars', 'Contributions'])
-#print(df)
+df = pd.DataFrame(list, columns=['Location', 'Followers', 'Following', 'Stars', 'Contributions', 'Description',
+                                 'Url_profile', 'Info'])
+print(df)
 
 #df.to_csv('scraping_results_cleaned.csv', index=False, header=True)
-df.to_csv('scraping_results_cleaned_diabetes_combinedAll.csv', index=False, header=True)
-print("CSV CREATED")
+#df.to_csv('scraping_results_cleaned_diabetes_combinedAll.csv', index=False, header=True)
+df.to_csv('scraping_results_cleaned_diabetes_1000.csv', index=False, header=True)
+#print("CSV CREATED")
 
 
