@@ -22,11 +22,13 @@
 
 import pandas as pd
 import re
-import nltk
+from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
+from collections import Counter
+from nltk.util import ngrams
 
 #from part_of_speech import get_part_of_speech
 data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
@@ -43,19 +45,32 @@ for index, row in data.iterrows():
 
 
 
-
     tokenized_words = word_tokenize(words)
+
+    stop_words = stopwords.words('english')
+    filtered = [word for word in tokenized_words if word not in stop_words]
 
     stemmer = PorterStemmer()
     stemmed = [stemmer.stem(token) for token in tokenized_words]
 
     lemmatizer = WordNetLemmatizer()
     #lemmatized = [lemmatizer.lemmatize(token, pos_tag(token)) for token in tokenized_words]
-    lemmatized = [lemmatizer.lemmatize(token) for token in tokenized_words]
+    lemmatized = [lemmatizer.lemmatize(token) for token in filtered]
     print("Stemmed text:")
     print(stemmed)
     print("\nLemmatized text:")
     print(lemmatized)
+
+    print("\nBag of Words:")
+    bag_of_looking_glass_words = Counter(lemmatized)
+    print(bag_of_looking_glass_words)
+
     print("===========================================")
+
+    ngrams = ngrams(lemmatized, 5)
+    ngrams_frequency = Counter(ngrams)
+    print("\n Most Common:")
+    print(ngrams_frequency.most_common(10))
+    print("\n\n")
 
 
