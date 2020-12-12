@@ -1,25 +1,3 @@
-# import pandas as pd
-# import nltk
-# from nltk import sent_tokenize
-# from nltk import word_tokenize
-# #nltk.download()
-#
-#
-# data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
-# # print(data.head(10))
-# # print(data['Description'])
-# #sentences = sent_tokenize(data['Description'].str)
-# #print(sentences[0])
-# #data['Description'] = data['Description'].str.replace(r'\W', ' ')
-# data['Words'] = data['Description'].apply(word_tokenize)
-# #print(data['Description'])
-# print(data['Words'])
-# data['Sentences'] = data['Description'].apply(sent_tokenize)
-# print(data['Sentences'])
-# # print(data['Info'])
-
-
-
 import pandas as pd
 import re
 from nltk.corpus import stopwords
@@ -29,8 +7,10 @@ from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
 from collections import Counter
 from nltk.util import ngrams
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.decomposition import LatentDirichletAllocation
 
-#from part_of_speech import get_part_of_speech
+
 data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
 
 for index, row in data.iterrows():
@@ -62,15 +42,30 @@ for index, row in data.iterrows():
     print(lemmatized)
 
     print("\nBag of Words:")
-    bag_of_looking_glass_words = Counter(lemmatized)
-    print(bag_of_looking_glass_words)
+    bag_of_words = Counter(lemmatized)
+    print(bag_of_words)
+
+    bag_of_words_creator = CountVectorizer()
+    bag_of_words = bag_of_words_creator.fit_transform(lemmatized)
 
     print("===========================================")
 
-    ngrams = ngrams(lemmatized, 5)
-    ngrams_frequency = Counter(ngrams)
-    print("\n Most Common:")
-    print(ngrams_frequency.most_common(10))
-    print("\n\n")
+    # ngrams = ngrams(lemmatized, 2)
+    # ngrams_frequency = Counter(ngrams)
+    # print("\n Most Common:")
+    # print(ngrams_frequency.most_common(5))
+    # print("\n\n")
+
+    # creating the bag of words LDA model
+    lda_bag_of_words_creator = LatentDirichletAllocation(learning_method='online', n_components=10)
+    lda_bag_of_words = lda_bag_of_words_creator.fit_transform(bag_of_words)
+
+
+    print("~~~ Topics found by bag of words LDA ~~~")
+    for topic_id, topic in enumerate(lda_bag_of_words_creator.components_):
+      message = "Topic #{}: ".format(topic_id + 1)
+      message += " ".join([bag_of_words_creator.get_feature_names()[i] for i in topic.argsort()[:-5 :-1]])
+      print(message)
+
 
 
