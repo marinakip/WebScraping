@@ -6,17 +6,27 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from collections import Counter
 import pandas as pd
+#from plotly.offline import iplot
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from geopy import Nominatim
+# import plotly.plotly as py
+# import plotly.graph_objs as go
+# from plotly.offline import init_notebook_mode, iplot
+import plotly.express as px
+import os
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
 
+if not os.path.exists("map_images"):
+    os.mkdir("map_images")
 
 stop_words = stopwords.words('english')
 lemmatizer = WordNetLemmatizer()
 english = set(nltk.corpus.words.words())
-
 
 
 def get_part_of_speech(word):
@@ -61,7 +71,7 @@ results_nonzero = np.nonzero(results)[0]
 
 geocoding_results = []
 
-print("Length Result Addresses: {}".format(len(results_nonzero)))
+#print("Length Result Addresses: {}".format(len(results_nonzero)))
 
 for i in results_nonzero:
     address = data.iloc[i, 0]
@@ -118,11 +128,57 @@ for i in results_nonzero:
         geocoding_results.append(dictionary)
 
 df = pd.DataFrame(geocoding_results)
-print("Length Dataframe: {}".format(df.size))
-print(df)
+#print("Length Dataframe: {}".format(df.size))
+#print(df)
+print("DATAFRAME CREATED")
 
-df.to_csv('search_results.csv')
+#df.to_csv('search_results.csv')
+#print("CSV CREATED")
 
+df['Followers_Count'] = df['Followers'].groupby(df['Country_Code']).transform('count')
+
+
+fig = px.choropleth(df,
+              locations="Country_Code",
+              color="Followers",
+              hover_name="Country",
+              animation_frame="Followers",
+              color_continuous_scale='Plasma',
+              height=600
+)
+fig.update_layout(margin={'r': 0, 't': 0, 'l': 0, 'b': 0})
+# fig.show()
+# fig.write_image("map_images/fig.jpeg")
+# print("MAP CREATED")
+
+app = dash.Dash()
+app.layout = html.Div([
+    dcc.Graph(figure=fig)
+])
+
+app.run_server(debug=True, use_reloader=False)
+
+
+#
+# data = dict(
+#         type = 'choropleth',
+#         locations = df['Country_Code'],
+#         z = df['Followers Count'],
+#         text = df['Country'],
+#         colorbar = {'title': 'Most Popular GitHub Users based on Followers and Location'},
+#       )
+# layout = dict(
+#     title = 'Followers',
+#     geo = dict(
+#             showframe = False,
+#             projection = {'type': 'natural earth'}
+#     )
+# )
+# choropleth_map = go.Figure(data = [data], layout = layout)
+# plot(choropleth_map)
+#
+
+#========================================================================================================
 
 # print(vectorizer.vocabulary_)
 # print(vectorizer.get_feature_names())
