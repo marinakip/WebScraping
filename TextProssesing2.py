@@ -20,6 +20,11 @@ import os
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import geopandas
+import matplotlib.pyplot as plt
+import geoplot
+import mapclassify
+import geoplot.crs as gcrs
 
 if not os.path.exists("map_images"):
     os.mkdir("map_images")
@@ -129,73 +134,81 @@ for i in results_nonzero:
 
 df = pd.DataFrame(geocoding_results)
 #print("Length Dataframe: {}".format(df.size))
-#print(df)
+print(df)
 print("DATAFRAME CREATED")
 
 #df.to_csv('search_results.csv')
 #print("CSV CREATED")
 
-df['Followers_Count'] = df['Followers'].groupby(df['Country_Code']).transform('count')
 
+gdf = geopandas.GeoDataFrame(df, geometry=geopandas.points_from_xy(df.Longitude, df.Latitude))
+print(gdf)
+print("GEO DATAFRAME CREATED")
 
-fig = px.choropleth(df,
-              locations="Country_Code",
-              color="Followers",
-              hover_name="Country",
-              animation_frame="Followers",
-              color_continuous_scale='Plasma',
-              height=600
-)
-fig.update_layout(margin={'r': 0, 't': 0, 'l': 0, 'b': 0})
-# fig.show()
-# fig.write_image("map_images/fig.jpeg")
-# print("MAP CREATED")
+world = geopandas.read_file(geopandas.datasets.get_path('naturalearth_lowres'))
 
-app = dash.Dash()
-app.layout = html.Div([
-    dcc.Graph(figure=fig)
-])
+ax = world.plot(color='white', edgecolor='black')
+gdf.plot(ax=ax, color='blue')
+plt.show()
 
-app.run_server(debug=True, use_reloader=False)
+# plt.savefig("map_images/map_plot.jpeg")
+# print("MAP 1 CREATED")
 
-
+#gpd_per_person = world['gdp_md_est'] / world['pop_est']
+# df.reset_index(drop=True, inplace=True)
+# stars = gdf['Stars'].to_numpy()
+# scheme = mapclassify.Quantiles(stars, k=5)
 #
-# data = dict(
-#         type = 'choropleth',
-#         locations = df['Country_Code'],
-#         z = df['Followers Count'],
-#         text = df['Country'],
-#         colorbar = {'title': 'Most Popular GitHub Users based on Followers and Location'},
-#       )
-# layout = dict(
-#     title = 'Followers',
-#     geo = dict(
-#             showframe = False,
-#             projection = {'type': 'natural earth'}
-#     )
+# # Note: this code sample requires geoplot>=0.4.0.
+# geoplot.choropleth(
+#     world, hue=stars, scheme=scheme,
+#     cmap='Greens', figsize=(8, 4)
 # )
-# choropleth_map = go.Figure(data = [data], layout = layout)
-# plot(choropleth_map)
-#
+# print("MAP 2 CREATED")
+# plt.show()
 
-#========================================================================================================
-
-# print(vectorizer.vocabulary_)
-# print(vectorizer.get_feature_names())
-# print(tfidf_scores)
-
-# for i in results.argsort()[-10:][::-1]:
-#     print(data.iloc[i,0],"--", data.iloc[i,1])
-
-
-# feature_names = vectorizer.get_feature_names()
-# print(feature_names)
-#
-# words_index = [f"Description {i+1}" for i in range(len(data['Description']))]
-#
-# # create pandas DataFrame with tf-idf scores
 # try:
-#   df_tf_idf = pd.DataFrame(tfidf_scores.T.todense(), index=feature_names, columns=words_index)
-#   print(df_tf_idf.head(10))
-# except:
-#   pass
+#     stars = gdf['Followers'].to_numpy()
+#     ax = geoplot.webmap(world, projection=gcrs.WebMercator())
+#     geoplot.pointplot(world, ax=ax, hue=stars, cmap='terrain', legend=True)
+# except ValueError:
+#     plt.show()
+#     pass
+
+
+# ax = world.plot(color='white', edgecolor='black')
+#
+# gdf.plot(ax=ax, color='red')
+
+#plt.show()
+
+
+
+#
+# df['Followers_Count'] = df['Followers'].groupby(df['Country_Code']).transform('count')
+#
+#
+# fig = px.choropleth(df,
+#               locations="Country_Code",
+#               color="Followers",
+#               hover_name="Country",
+#               animation_frame="Followers",
+#               color_continuous_scale='Plasma',
+#               height=600
+# )
+# fig.update_layout(margin={'r': 0, 't': 0, 'l': 0, 'b': 0})
+# # fig.show()
+# # fig.write_image("map_images/fig.jpeg")
+# # print("MAP CREATED")
+#
+#
+# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+#
+# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+#
+# app.layout = html.Div([
+#     dcc.Graph(figure=fig)
+# ])
+# if __name__ == '__main__':
+#     app.run_server(debug=False)
+#
