@@ -25,6 +25,8 @@ import matplotlib.pyplot as plt
 import geoplot
 import mapclassify
 import geoplot.crs as gcrs
+import mapclassify
+import geojson
 
 if not os.path.exists("map_images"):
     os.mkdir("map_images")
@@ -173,15 +175,55 @@ df = pd.DataFrame(geocoding_results)
 # print("CSV CREATED")
 
 
-gdf = geopandas.GeoDataFrame(df, geometry=geopandas.points_from_xy(df.Longitude, df.Latitude))
+#gdf = geopandas.GeoDataFrame(df, geometry=geopandas.points_from_xy(df.Longitude, df.Latitude))
 # print(gdf)
 # print("GEO DATAFRAME CREATED")
 
-world = geopandas.read_file(geopandas.datasets.get_path('naturalearth_lowres'))
+#world = geopandas.read_file(geopandas.datasets.get_path('naturalearth_lowres'))
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ax = world.plot(color='white', edgecolor='black')
+# gdf.plot(ax=ax, color='blue')
+# plt.show()
+#======================================================
 
-ax = world.plot(color='white', edgecolor='black')
-gdf.plot(ax=ax, color='blue')
-plt.show()
+# similarity = np.asarray(df['Similarity'])
+# #scheme = mapclassify.Quantiles(similarity, k=3)
+#
+# fig = geoplot.choropleth(
+#         world, hue=similarity,
+#         cmap='Greens', figsize=(8, 4)
+#        )
+# fig.show()
+
+# data = [dict(type = 'choropleth',
+#             colorscale = 'Reds',
+#             locations=df['Country_Code'], # Spatial coordinates
+#             z = df['Similarity'].astype(float), # Data to be color-coded
+#             locationmode = 'USA-states', # set of locations match entries in `locations
+#             colorbar = {'title':"Cosine Similarity"},
+#            )]
+#
+# layout = dict(title = 'No Title',
+#               geo = dict(scope='usa', showlakes = True)) # limite map scope to USA)
+#
+# fig = dict( data=data, layout=layout )
+# fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+# fig.show()
+
+
+path_to_file = 'custom.geo.json'
+with open(path_to_file) as f:
+    geo = geojson.load(f)
+
+fig = px.choropleth(data_frame=df,
+                    geojson=geo,
+                    locations='Country',
+                    locationmode = 'country names',
+                    color='Followers',
+                    color_continuous_scale='Viridis',
+                    range_color=(0, 1000))
+#fig.show()
+fig.write_image("map_images/choropleth3.jpeg")
 #=============================================================
 # geo_df = geopandas.GeoDataFrame.from_features(
 #     px.data.election_geojson()["features"]
