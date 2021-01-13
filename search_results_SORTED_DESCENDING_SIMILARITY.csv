@@ -1,0 +1,51 @@
+,Address,Latitude,Longitude,Country,Country_Code,Followers,Following,Stars,Contributions,Url_profile,Similarity
+0,"Dublin, Ireland",53.3497645,-6.2602732,Éire / Ireland,ie,4,4,4,1,https://github.com/nahog,0.40410947
+1,Israel,31.5313113,34.8667654,ישראל,il,8,0,74,66,https://github.com/OrDuan,0.16889332
+2,Uppsala,59.8586126,17.6387436,Sverige,se,75,13,125,248,https://github.com/abergs,0.16757971
+3,delhi india,28.6517178,77.2219388,India,in,1,0,7,4,https://github.com/sumitrathore1313,0.12583845
+4,127.0.0.1,53.548124,8.6194486,Deutschland,de,29,297,2000,444,https://github.com/Sphinxs,0.12304004
+5,127.0.0.1,53.548124,8.6194486,Deutschland,de,29,297,2000,444,https://github.com/Sphinxs,0.12304004
+6,"Austin, TX",30.2711286,-97.7436995,United States,us,11,9,13,0,https://github.com/nirav99,0.10992684
+7,"Pune,INDIA",18.521428,73.8544541,India,in,5,2,6,800,https://github.com/Uttam580,0.09001791
+8,New York,40.7127281,-74.0060152,United States,us,3,0,0,3,https://github.com/niharikagulati,0.08324814
+9,"Canada, Edmonton,AB",53.535411,-113.507996,Canada,ca,1,6,15,9,https://github.com/khatabi-abderrahim,0.08293543
+10,VIT Vellore,12.97229435,79.16075427896692,India,in,10,5,192,105,https://github.com/Rushanksavant,0.07761173
+11,Knoxville,35.9603948,-83.9210261,United States,us,10,7,142,222,https://github.com/AroSwift,0.07619055
+12,"San Jose, CA",37.3361905,-121.890583,United States,us,6,0,19,6,https://github.com/jerisalan,0.07493751
+13,"San Jose, CA",37.3361905,-121.890583,United States,us,6,0,19,6,https://github.com/jerisalan,0.07493751
+14,"Cuttack , Odisha , India",20.4686,85.8792,India,in,13,10,8,32,https://github.com/DevSurya,0.07395513
+15,glasgow,55.8609825,-4.2488787,United Kingdom,gb,10,16,11,60,https://github.com/csainsbury,0.07246744
+16,San Francisco Bay Area,37.7884969,-122.3558473,United States,us,3,0,1,0,https://github.com/jonneff,0.07146316
+17,"Ohio, United States",40.2253569,-82.6881395,United States,us,1,1,1,9,https://github.com/ethan-lefeb,0.06982371
+18,"Ohio, United States",40.2253569,-82.6881395,United States,us,1,1,1,9,https://github.com/ethan-lefeb,0.06982371
+19,"Pune, India",18.521428,73.8544541,India,in,29,37,437,155,https://github.com/nirajpandkar,0.06906752
+20,"Tehran, Iran ",35.6892523,51.3896004,ایران,ir,86,283,185,337,https://github.com/AminTaheri23,0.06695265
+21,"Milan,Italy",45.4668,9.1905,Italia,it,14,4,28,95,https://github.com/eddieir,0.0656572
+22,Bangalore,12.9791198,77.5912997,India,in,15,13,27,139,https://github.com/shreyavshetty,0.06177307
+23,"New Delhi, India",28.6138954,77.2090057,India,in,15,0,62,669,https://github.com/shubhamgoel90,0.0572316
+24,India,22.3511148,78.6677428,India,in,0,0,6,20,https://github.com/erdivyang10,0.05295668
+25,Italy,42.6384261,12.674297,Italia,it,109,8,10,763,https://github.com/andreagrandi,0.05014056
+26,"Pune, India",18.521428,73.8544541,India,in,4,24,58,95,https://github.com/Aditya-Mankar,0.04236208
+27,Boston,42.3602534,-71.0582912,United States,us,84,15,49,271,https://github.com/SayantanMitra87,0.03981528
+28,Berlin,52.5170365,13.3888599,Deutschland,de,2,0,0,5,https://github.com/macabeigier,0.03978005
+29,"Hyderabad, India",17.38878595,78.46106473453146,India,in,14,25,23,78,https://github.com/KriAga,0.03868501
+30,"Dhaka, Bangladesh",23.810651,90.4126466,বাংলাদেশ,bd,14,43,28,32,https://github.com/razuswe,0.03731808
+31,"Berlin, Germany",52.5170365,13.3888599,Deutschland,de,13,14,394,596,https://github.com/jcpsantiago,0.03669682
+32,Texas,31.8160381,-99.5120986,United States,us,4,0,7,38,https://github.com/disojn,0.03596433
+33,between Brittany and South Korea,,,United States,us,99,39,418,217,https://github.com/foxmask,0.03567068
+34,London,51.5073219,-0.1276474,United Kingdom,gb,136,54,38,9133,https://github.com/pikesley,0.03178978
+35,"Salt Lake City, UT",40.7596198,-111.8867975,United States,us,0,1,0,0,https://github.com/chelseamlap,0.02770377
+36,"Chennai,Tamil Nadu,India",13.0836939,80.270186,India,in,31,29,23,23,https://github.com/SridharCR,0.02611752
+37,Italy,42.6384261,12.674297,Italia,it,2,5,2,630,https://github.com/gui-dos,0.02390677
+38,Kochi,9.9313695,76.2673759,India,in,16,34,98,79,https://github.com/PatrickPrakash,0.02367215
+39,The Netherlands,52.5001698,5.7480821,Nederland,nl,33,2,2,267,https://github.com/svanas,0.02365271
+40,Boston,42.3602534,-71.0582912,United States,us,17,0,6,30,https://github.com/jxx123,0.01788977
+41,"London, Ontario",42.9836747,-81.2496068,Canada,ca,12,11,217,54,https://github.com/thedamon,0.01760398
+42,"Türkheim, Germany",48.0601151,10.6394156,Deutschland,de,16,5,17,785,https://github.com/Faltenreich,0.01714569
+43,San Francisco,37.7790262,-122.4199061,United States,us,244,63,646,91,https://github.com/bewest,0.01517437
+44,"Wales, UK",52.2928116,-3.73893,United Kingdom,gb,826,2,57,2526,https://github.com/tomwhite,0.01480021
+45,istanbul,41.0096334,28.9651646,Türkiye,tr,8,9,25,49,https://github.com/malionde,0.01337605
+46,"Berlin, Germany / Hennigsdorf, Germany",,,Türkiye,tr,1,1,3,0,https://github.com/boRp,0.01108345
+47,"Syracuse, New York, US",43.0481221,-76.1474244,United States,us,5,1,7,82,https://github.com/Laxman-Kumar,0.0105017
+48,Planet Earth,41.1018669,-81.1515962,United States,us,4,0,0,36,https://github.com/rohit43,0.00966487
+49,San Francisco,37.7790262,-122.4199061,United States,us,244,63,646,91,https://github.com/bewest,0.0045205

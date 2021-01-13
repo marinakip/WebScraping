@@ -67,23 +67,50 @@ query = "glucose meter"
 query_vec = vectorizer.transform([query])
 
 results = cosine_similarity(tfidf_scores, query_vec)
+#print(results)
+
+
+results_position = np.where(results)
+
+#print(results_position)
+sorted = np.argsort(results[results_position])[::-1]  # descending order
+#print("SORTED")
+#print(sorted)
+#print(" RESULT SORTED")
+results_sorted = tuple(np.array(results_position)[:, sorted])
+#print(results_sorted)
+#print("COSINE SIMILARITY RESULTS SORTED")
+cosine_similarity_sorted = results[results_sorted[0]]
+#print(cosine_similarity_sorted)
+
+# print("ELEMENTS VALUES")
+# print(results[169])
+# print(results[149])
+# print(results[279])
+
 
 #print(len(results))
 #print(len(data['Description']))
 
 
-results_nonzero = np.nonzero(results)[0]
+# results_nonzero = np.nonzero(results)[0]
+# print(results_nonzero)
+
 
 geocoding_results = []
 
 #print("Length Result Addresses: {}".format(len(results_nonzero)))
 
-for i in results_nonzero:
+# for i in results_nonzero:
+for i in results_sorted[0]:
+    similarity = results[i]
+    similarity = str(similarity).replace('[', '').replace(']', '')
+    #print(similarity)
     address = data.iloc[i, 0]
     locator = Nominatim(user_agent="myGeocoder")
     followers = data.iloc[i, 1]
-    # print(address)
-    # print(followers)
+    #print(address)
+    #print(followers)
     following = data.iloc[i, 2]
     stars = data.iloc[i, 3]
     contributions = data.iloc[i, 4]
@@ -109,6 +136,10 @@ for i in results_nonzero:
     except KeyError:
         country = None
         country_code = None
+    except NameError:
+        #print("MPIKE")
+        country = None
+        country_code = None
 
     finally:
         # print("Display Name = {}".format(display_name))
@@ -126,7 +157,8 @@ for i in results_nonzero:
             'Stars'	: stars,
             'Contributions'	: contributions,
             #'Description': description
-            'Url_profile'	: url_profile
+            'Url_profile'	: url_profile,
+            'Similarity' : similarity
             #Info : info
 
         }
@@ -134,24 +166,39 @@ for i in results_nonzero:
 
 df = pd.DataFrame(geocoding_results)
 #print("Length Dataframe: {}".format(df.size))
-print(df)
-print("DATAFRAME CREATED")
+# print(df)
+# print("DATAFRAME CREATED")
 
-#df.to_csv('search_results.csv')
-#print("CSV CREATED")
+# df.to_csv('search_results_SORTED_DESCENDING_SIMILARITY.csv')
+# print("CSV CREATED")
 
 
 gdf = geopandas.GeoDataFrame(df, geometry=geopandas.points_from_xy(df.Longitude, df.Latitude))
-print(gdf)
-print("GEO DATAFRAME CREATED")
+# print(gdf)
+# print("GEO DATAFRAME CREATED")
 
 world = geopandas.read_file(geopandas.datasets.get_path('naturalearth_lowres'))
 
 ax = world.plot(color='white', edgecolor='black')
 gdf.plot(ax=ax, color='blue')
 plt.show()
+#=============================================================
+# geo_df = geopandas.GeoDataFrame.from_features(
+#     px.data.election_geojson()["features"]
+# ).merge(df, on="district").set_index("district")
+#
+# fig = px.choropleth_mapbox(geo_df,
+#                            geojson=geo_df.geometry,
+#                            locations=geo_df.index,
+#                            color="Joly",
+#                            center={"lat": 45.5517, "lon": -73.7073},
+#                            mapbox_style="open-street-map",
+#                            zoom=8.5)
+# fig.show()
+#=====================================================================
 
-# plt.savefig("map_images/map_plot.jpeg")
+
+# plt.savefig("map_images/map_plot_NEW_DESC.jpeg")
 # print("MAP 1 CREATED")
 
 #gpd_per_person = world['gdp_md_est'] / world['pop_est']
