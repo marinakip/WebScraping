@@ -175,15 +175,25 @@ df = pd.DataFrame(geocoding_results)
 # print("CSV CREATED")
 
 
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #gdf = geopandas.GeoDataFrame(df, geometry=geopandas.points_from_xy(df.Longitude, df.Latitude))
 # print(gdf)
 # print("GEO DATAFRAME CREATED")
-
 #world = geopandas.read_file(geopandas.datasets.get_path('naturalearth_lowres'))
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ax = world.plot(color='white', edgecolor='black')
 # gdf.plot(ax=ax, color='blue')
 # plt.show()
+
+
+# plt.savefig("map_images/map_plot_NEW_DESC.jpeg")
+# print("MAP 1 CREATED")
+
+
+# ax = world.plot(color='white', edgecolor='black')
+#
+# gdf.plot(ax=ax, color='red')
+
+#plt.show()
 #======================================================
 
 # similarity = np.asarray(df['Similarity'])
@@ -224,71 +234,8 @@ fig = px.choropleth(data_frame=df,
                     range_color=(0, 1000))
 #fig.show()
 fig.write_image("map_images/choropleth3.jpeg")
-#=============================================================
-# geo_df = geopandas.GeoDataFrame.from_features(
-#     px.data.election_geojson()["features"]
-# ).merge(df, on="district").set_index("district")
-#
-# fig = px.choropleth_mapbox(geo_df,
-#                            geojson=geo_df.geometry,
-#                            locations=geo_df.index,
-#                            color="Joly",
-#                            center={"lat": 45.5517, "lon": -73.7073},
-#                            mapbox_style="open-street-map",
-#                            zoom=8.5)
-# fig.show()
-#=====================================================================
 
 
-# plt.savefig("map_images/map_plot_NEW_DESC.jpeg")
-# print("MAP 1 CREATED")
-
-#gpd_per_person = world['gdp_md_est'] / world['pop_est']
-# df.reset_index(drop=True, inplace=True)
-# stars = gdf['Stars'].to_numpy()
-# scheme = mapclassify.Quantiles(stars, k=5)
-#
-# # Note: this code sample requires geoplot>=0.4.0.
-# geoplot.choropleth(
-#     world, hue=stars, scheme=scheme,
-#     cmap='Greens', figsize=(8, 4)
-# )
-# print("MAP 2 CREATED")
-# plt.show()
-
-# try:
-#     stars = gdf['Followers'].to_numpy()
-#     ax = geoplot.webmap(world, projection=gcrs.WebMercator())
-#     geoplot.pointplot(world, ax=ax, hue=stars, cmap='terrain', legend=True)
-# except ValueError:
-#     plt.show()
-#     pass
-
-
-# ax = world.plot(color='white', edgecolor='black')
-#
-# gdf.plot(ax=ax, color='red')
-
-#plt.show()
-
-
-
-#
-# df['Followers_Count'] = df['Followers'].groupby(df['Country_Code']).transform('count')
-#
-#
-# fig = px.choropleth(df,
-#               locations="Country_Code",
-#               color="Followers",
-#               hover_name="Country",
-#               animation_frame="Followers",
-#               color_continuous_scale='Plasma',
-#               height=600
-# )
-# fig.update_layout(margin={'r': 0, 't': 0, 'l': 0, 'b': 0})
-# # fig.show()
-# # fig.write_image("map_images/fig.jpeg")
-# # print("MAP CREATED")
 #
 #
 # external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
