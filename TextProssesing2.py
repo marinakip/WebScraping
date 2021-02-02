@@ -55,6 +55,12 @@ def clean_text(text):
     normalized = " ".join([lemmatizer.lemmatize(token, get_part_of_speech(token)) for token in filtered])
     return normalized
 
+def normalize(df):
+    result = df.copy()
+    max_value = df.max()
+    min_value = df.min()
+    result = (df - min_value) / (max_value - min_value)
+    return result
 
 data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
 cleaned_text = [clean_text(text) for text in data['Description']]
@@ -167,12 +173,35 @@ for i in results_sorted[0]:
         geocoding_results.append(dictionary)
 
 df = pd.DataFrame(geocoding_results)
+
+print("Followers Normalized")
+norm_followers = normalize(df.Followers)
+print(norm_followers.head())
+df.Followers = norm_followers
+
+print("Following Normalized")
+norm_following = normalize(df.Following)
+print(norm_following.head())
+df.Following = norm_following
+
+print("Stars Normalized")
+norm_stars = normalize(df.Stars)
+print(norm_stars.head())
+df.Stars = norm_stars
+
+print("Contributions Normalized")
+norm_contributions = normalize(df.Contributions)
+print(norm_contributions.head())
+df.Contributions = norm_contributions
+
+print(df.head(10))
+
 #print("Length Dataframe: {}".format(df.size))
 # print(df)
 # print("DATAFRAME CREATED")
 
-# df.to_csv('search_results_SORTED_DESCENDING_SIMILARITY.csv')
-# print("CSV CREATED")
+df.to_csv('search_results_SORTED_DESCENDING_SIMILARITY_normalized.csv')
+print("CSV CREATED")
 
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -231,9 +260,9 @@ fig = px.choropleth(data_frame=df,
                     locationmode = 'country names',
                     color='Followers',
                     color_continuous_scale='Viridis',
-                    range_color=(0, 1000))
+                    range_color=(0, 1))
 #fig.show()
-fig.write_image("map_images/choropleth3.jpeg")
+fig.write_image("map_images/choropleth3_normalized_new.jpeg")
 
 
 #
