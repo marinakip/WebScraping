@@ -62,6 +62,12 @@ def normalize(df):
     result = (df - min_value) / (max_value - min_value)
     return result
 
+def weight(df):
+    df['Weight'] = (df['Followers'] * 0.2) + (df['Following'] * 0.1) + (df['Stars'] * 0.3) + (
+                df['Contributions'] * 0.4)
+    return df['Weight']
+
+
 data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
 cleaned_text = [clean_text(text) for text in data['Description']]
 #print(cleaned_text)
@@ -194,13 +200,15 @@ norm_contributions = normalize(df.Contributions)
 print(norm_contributions.head())
 df.Contributions = norm_contributions
 
+df.Weight = weight(df)
+
 print(df.head(10))
 
 #print("Length Dataframe: {}".format(df.size))
 # print(df)
 # print("DATAFRAME CREATED")
 
-df.to_csv('search_results_SORTED_DESCENDING_SIMILARITY_normalized.csv')
+df.to_csv('search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv')
 print("CSV CREATED")
 
 

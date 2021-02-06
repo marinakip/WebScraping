@@ -26,7 +26,8 @@ import numpy as np
 #     plt.show()
 
 #df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY.csv")
-df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized.csv")
+#df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized.csv")
+df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv")
 df = df[['Latitude', 'Longitude']]
 column1 = df['Latitude']
 column2 = df['Longitude']
@@ -63,6 +64,7 @@ plt.scatter(df['Latitude'], df['Longitude'], c= kmeans.labels_.astype(float), s=
 plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50)
 plt.xlabel('Latitude')
 plt.ylabel('Longitude')
+# plt.show()
 plt.savefig("map_images/clusters_plot_latitude_longitude_kmeans_with_arguments_normalized.jpeg")
 #plt.savefig("map_images/clusters_plot_latitude_longitude_kmeans_no_arguments.jpeg")
 # plt.savefig("map_images/clusters_plot_latitude_longitude_kmeans_no_arguments_scaled_df.jpeg")
