@@ -1,64 +1,79 @@
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
-import pandas as pd
-import mysql.connector
-import pandas.io.sql as psql
+import dash_bootstrap_components as dbc
+import numpy as np
 
-# db = mysql.connector.connect(
-#   host="localhost",
-#   user="root",
-#   password="marina1992",
-#   database="locations"
-# )
-#
-# print(db)
-# query = "SELECT * FROM addresses_geocoded WHERE weight > 2000"
-#=================================================================
-# cursor = db.cursor()
-# cursor.execute(query)
-# addresses = cursor.fetchmany(10)
-#print("Total number of rows is: ", cursor.rowcount)
+# bootstrap =  "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/solar/bootstrap.min.css"
+# app = dash.Dash(external_stylesheets=[bootstrap])
 
-# for x in addresses:
-#     print(x)
-#===================================================
-# df = psql.read_sql(query, con=db)
-# print(df.head(10))
+features = ['Followers', 'Following', 'Stars', 'Contributions']
+continents = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America']
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, title = 'GitHub\'s Users Location', external_stylesheets = [dbc.themes.SOLAR])
 
 app.layout = html.Div([
+    html.H1(" Locations of GitHub Users", style = {'text-align': 'center'}),
+    html.Div([
+        html.Div(dcc.Input(id = 'input-box', type = 'text', className = 'form-control mr-sm-2'),
+                                                                                style ={'width': '80%', 'float': 'left'}),
+        html.Button('Search', id = 'button', className = 'btn btn-secondary my-2 my-sm-0'),
+    ]),  #DIV SEARCH
+    # html.Code([
+    #     <form class="form-inline my-2 my-lg-0">
+    #           <input class="form-control mr-sm-2" type="text" placeholder="Search">
+    #           <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+    #     </form>
+    # ]), #search2
+    html.Div([
+        html.Div([
+            html.Div([
+                html.Label('Category'),
+                dcc.Dropdown(
+                    id = 'filter-feature',
+                    options = [{'label': i, 'value': i} for i in features],
+                    value = 'Followers',
+                    clearable = False)
 
-    html.H1(" Locations of GitHub Users", style={'text-align': 'center'}),
+            ]), #DIV DROPDOWN CATEGORY
 
-    dcc.Dropdown(id="keywords",
-                 options=[
-                     {"label": "Diabetes", "value": "diabetes"},
-                     {"label": "Machine Learning", "value": "machine learning"},
-                     {"label": "Medical", "value": "medical"}],
-                 multi=True,
-                 value="diabetes",
-                 style={'width': "70%"}
-                 ),
+        ], style = {'width': '45%', 'font-size': '20px', 'float': 'right', 'display': 'inline-block'}), #DIV CATEGORY
+
+        html.Div([
+            html.Label('Continent'),
+            dcc.Dropdown(
+                id = 'filter-continent',
+                options = [{'label': i, 'value': i} for i in continents],
+                value = 'Europe',
+                clearable = False
+            )
+        ], style = {'width': '45%', 'font-size': '20px', 'display': 'inline-block'}), #DIV CONTINENT
+
+        html.Div([])
+
+
+    ]), #DIV FILTERS
     html.Br(),
+    html.Div([
+        dcc.Graph(
+            id = 'world-map',
+            hoverData = {}
+        ),
 
-    dcc.Slider(
-        min=2016,
-        max=2020,
-        marks={i: '{}'.format(i) for i in range(2016, 2021)},
-        value=2016,
-    ),
+        html.Br(),
+        html.Br(),
 
-    html.Div(id='output_container', children=[]),
-    html.Br(),
+        dcc.Graph(
+            id = 'scatter-plot',
+            hoverData = {}
+        )
 
-    dcc.Graph(id='map', figure={})
+    ], style = {'width': '100%', 'height': '90%', 'display': 'inline-block', 'padding': '0 20'}) #DIV GRAPHS
 
 ])
 
-if __name__ == '__main__':
-    app.run_server(debug=True)
-
-# db.close()
+if __name__ == "__main__":
+    app.run_server(debug = True)
