@@ -36,14 +36,16 @@ def clustering(df, column):
     # print(df)
     # print("CLUSTER CENTERS")
     # print(centroids)
-    sns.barplot(data = df, x = 'Cluster', y = f'{column}')
     plt.xlabel('Cluster')
     plt.ylabel(f'{column}')
+    figure = sns.barplot(data = df, x = 'Cluster', y = f'{column}')
+
     name = str(column)
     name = re.sub(r'\\', ' ', name)
     # print(name)
     #plt.show()
-    plt.savefig("map_images/clusters_barchart_{}_kmeans_with_arguments_normalized.jpeg".format(name))
+    #plt.savefig("map_images/clusters_barchart_{}_kmeans_with_arguments_normalized.jpeg".format(name))
+    return figure
 
 def clustering_with_weight(df, column):
     kmeans = KMeans(init = "random", n_clusters = 10, n_init = 100, max_iter = 1000)
@@ -53,19 +55,22 @@ def clustering_with_weight(df, column):
     # print(df)
     # print("CLUSTER CENTERS")
     # print(centroids)
-    sns.scatterplot(data = df, x =f'{column}', y ='Weight')
     plt.xlabel(f'{column}')
     plt.ylabel('Weight')
+    figure = sns.scatterplot(data = df, x =f'{column}', y ='Weight')
     name = str(column)
     name = re.sub(r'\\', ' ', name)
     # print(name)
     #plt.show()
-    plt.savefig("map_images/clusters_with_weights_{}_kmeans_normalized.jpeg".format(name))
+    #plt.savefig("map_images/clusters_with_weights_{}_kmeans_normalized.jpeg".format(name))
+    return figure
 
 
 #df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY.csv")
 #df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized.csv")
+
 df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv")
+
 
 #df = df[['Followers', 'Following']]
 df.dropna(inplace=True)

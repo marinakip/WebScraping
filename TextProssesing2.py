@@ -67,221 +67,333 @@ def weight(df):
                 df['Contributions'] * 0.4)
     return df['Weight']
 
+def process_query(query):
+    data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
+    cleaned_text = [clean_text(text) for text in data['Description']]
 
-data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
-cleaned_text = [clean_text(text) for text in data['Description']]
-#print(cleaned_text)
+    vectorizer = TfidfVectorizer(norm = None)
+    tfidf_scores = vectorizer.fit_transform(cleaned_text)
 
+    query_vec = vectorizer.transform([query])
 
-vectorizer = TfidfVectorizer(norm=None)
-tfidf_scores = vectorizer.fit_transform(cleaned_text)
-#print(tfidf_scores)
+    results = cosine_similarity(tfidf_scores, query_vec)
 
-query = "glucose meter"
-query_vec = vectorizer.transform([query])
+    results_position = np.where(results)
 
-results = cosine_similarity(tfidf_scores, query_vec)
-#print(results)
+    sorted = np.argsort(results[results_position])[::-1]  # descending order
 
+    results_sorted = tuple(np.array(results_position)[:, sorted])
 
-results_position = np.where(results)
+    geocoding_results = []
 
-#print(results_position)
-sorted = np.argsort(results[results_position])[::-1]  # descending order
-#print("SORTED")
-#print(sorted)
-#print(" RESULT SORTED")
-results_sorted = tuple(np.array(results_position)[:, sorted])
-#print(results_sorted)
-#print("COSINE SIMILARITY RESULTS SORTED")
-cosine_similarity_sorted = results[results_sorted[0]]
-#print(cosine_similarity_sorted)
+    print("GEOCODING RESULTS STARTED ")
 
-# print("ELEMENTS VALUES")
-# print(results[169])
-# print(results[149])
-# print(results[279])
+    for i in results_sorted[0]:
+        similarity = results[i]
+        similarity = str(similarity).replace('[', '').replace(']', '')
+        address = data.iloc[i, 0]
+        locator = Nominatim(user_agent = "myGeocoder")
+        followers = data.iloc[i, 1]
+        following = data.iloc[i, 2]
+        stars = data.iloc[i, 3]
+        contributions = data.iloc[i, 4]
+        url_profile = data.iloc[i, 6]
+        # info
 
+        try:
+            location = locator.geocode(address, timeout = 30)
+            latitude = location.latitude
+            longitude = location.longitude
+            location = locator.reverse([latitude, longitude])
 
-#print(len(results))
-#print(len(data['Description']))
+            display_name = location.raw['display_name']
+            country = location.raw['address']['country']
+            country_code = location.raw['address']['country_code']
 
+        except AttributeError:
 
-# results_nonzero = np.nonzero(results)[0]
-# print(results_nonzero)
+            latitude = None
+            longitude = None
 
+        except KeyError:
+            country = None
+            country_code = None
+        except NameError:
 
-geocoding_results = []
+            country = None
+            country_code = None
 
-#print("Length Result Addresses: {}".format(len(results_nonzero)))
+        finally:
 
-# for i in results_nonzero:
-for i in results_sorted[0]:
-    similarity = results[i]
-    similarity = str(similarity).replace('[', '').replace(']', '')
-    #print(similarity)
-    address = data.iloc[i, 0]
-    locator = Nominatim(user_agent="myGeocoder")
-    followers = data.iloc[i, 1]
-    #print(address)
-    #print(followers)
-    following = data.iloc[i, 2]
-    stars = data.iloc[i, 3]
-    contributions = data.iloc[i, 4]
-    # description = data.iloc[i, 5]
-    url_profile = data.iloc[i, 6]
-    # info
+            dictionary = {
+                'Address': address,
+                'Latitude': latitude,
+                'Longitude': longitude,
+                'Country': country,
+                'Country_Code': country_code,
+                'Followers': followers,
+                'Following': following,
+                'Stars': stars,
+                'Contributions': contributions,
+                # 'Description': description
+                'Url_profile': url_profile,
+                'Similarity': similarity
+                # Info : info
 
-    try:
-        location = locator.geocode(address, timeout = 30)
-        latitude = location.latitude
-        longitude = location.longitude
-        location = locator.reverse([latitude, longitude])
-        #print(location.raw)
-        display_name = location.raw['display_name']
-        country = location.raw['address']['country']
-        country_code = location.raw['address']['country_code']
-        #print(location.raw)
-    except AttributeError:
-        # location = "NONE"
-        latitude = None
-        longitude = None
+            }
+            geocoding_results.append(dictionary)
 
-    except KeyError:
-        country = None
-        country_code = None
-    except NameError:
-        #print("MPIKE")
-        country = None
-        country_code = None
+    df = pd.DataFrame(geocoding_results)
 
-    finally:
-        # print("Display Name = {}".format(display_name))
-        # print("Latitude = {}, Longitude = {}".format(latitude, longitude))
-        # print("Country = {}, Country Code = {}".format(country, country_code))
+    print("NORMALIZATION OF RESULTS")
 
-        dictionary = {
-            'Address': address,
-            'Latitude': latitude,
-            'Longitude': longitude,
-            'Country': country,
-            'Country_Code': country_code,
-            'Followers'	: followers,
-            'Following'	: following,
-            'Stars'	: stars,
-            'Contributions'	: contributions,
-            #'Description': description
-            'Url_profile'	: url_profile,
-            'Similarity' : similarity
-            #Info : info
+    # print("Followers Normalized")
+    norm_followers = normalize(df.Followers)
+    # print(norm_followers.head())
+    df.Followers = norm_followers
 
-        }
-        geocoding_results.append(dictionary)
+    # print("Following Normalized")
+    norm_following = normalize(df.Following)
+    # print(norm_following.head())
+    df.Following = norm_following
 
-df = pd.DataFrame(geocoding_results)
+    # print("Stars Normalized")
+    norm_stars = normalize(df.Stars)
+    # print(norm_stars.head())
+    df.Stars = norm_stars
 
-print("Followers Normalized")
-norm_followers = normalize(df.Followers)
-print(norm_followers.head())
-df.Followers = norm_followers
+    # print("Contributions Normalized")
+    norm_contributions = normalize(df.Contributions)
+    # print(norm_contributions.head())
+    df.Contributions = norm_contributions
 
-print("Following Normalized")
-norm_following = normalize(df.Following)
-print(norm_following.head())
-df.Following = norm_following
+    print("WEIGHT")
+    df.Weight = weight(df)
 
-print("Stars Normalized")
-norm_stars = normalize(df.Stars)
-print(norm_stars.head())
-df.Stars = norm_stars
+    # print(df.head(10))
 
-print("Contributions Normalized")
-norm_contributions = normalize(df.Contributions)
-print(norm_contributions.head())
-df.Contributions = norm_contributions
+    print("PLOTTING CHOROPLETH")
 
-df.Weight = weight(df)
+    path_to_file = 'custom.geo.json'
+    with open(path_to_file) as f:
+        geo = geojson.load(f)
 
-print(df.head(10))
+    fig = px.choropleth(data_frame = df,
+                        geojson = geo,
+                        locations = 'Country',
+                        locationmode = 'country names',
+                        color = 'Followers',
+                        color_continuous_scale = 'Viridis',
+                        range_color = (0, 1))
 
-#print("Length Dataframe: {}".format(df.size))
-# print(df)
-# print("DATAFRAME CREATED")
-
-df.to_csv('search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv')
-print("CSV CREATED")
+    #return df
+    return fig, df
 
 
-#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#gdf = geopandas.GeoDataFrame(df, geometry=geopandas.points_from_xy(df.Longitude, df.Latitude))
-# print(gdf)
-# print("GEO DATAFRAME CREATED")
-#world = geopandas.read_file(geopandas.datasets.get_path('naturalearth_lowres'))
-# ax = world.plot(color='white', edgecolor='black')
-# gdf.plot(ax=ax, color='blue')
-# plt.show()
 
-
-# plt.savefig("map_images/map_plot_NEW_DESC.jpeg")
-# print("MAP 1 CREATED")
-
-
-# ax = world.plot(color='white', edgecolor='black')
-#
-# gdf.plot(ax=ax, color='red')
-
-#plt.show()
-#======================================================
-
-# similarity = np.asarray(df['Similarity'])
-# #scheme = mapclassify.Quantiles(similarity, k=3)
-#
-# fig = geoplot.choropleth(
-#         world, hue=similarity,
-#         cmap='Greens', figsize=(8, 4)
-#        )
-# fig.show()
-
-# data = [dict(type = 'choropleth',
-#             colorscale = 'Reds',
-#             locations=df['Country_Code'], # Spatial coordinates
-#             z = df['Similarity'].astype(float), # Data to be color-coded
-#             locationmode = 'USA-states', # set of locations match entries in `locations
-#             colorbar = {'title':"Cosine Similarity"},
-#            )]
-#
-# layout = dict(title = 'No Title',
-#               geo = dict(scope='usa', showlakes = True)) # limite map scope to USA)
-#
-# fig = dict( data=data, layout=layout )
-# fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-# fig.show()
-
-
-path_to_file = 'custom.geo.json'
-with open(path_to_file) as f:
-    geo = geojson.load(f)
-
-fig = px.choropleth(data_frame=df,
-                    geojson=geo,
-                    locations='Country',
-                    locationmode = 'country names',
-                    color='Followers',
-                    color_continuous_scale='Viridis',
-                    range_color=(0, 1))
-#fig.show()
-fig.write_image("map_images/choropleth3_normalized_new.jpeg")
-
-
+# #-------------------------------------------------------------------------------------
+# data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
+# cleaned_text = [clean_text(text) for text in data['Description']]
+# #print(cleaned_text)
 #
 #
-# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+# vectorizer = TfidfVectorizer(norm=None)
+# tfidf_scores = vectorizer.fit_transform(cleaned_text)
+# #print(tfidf_scores)
 #
-# app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+# query = "glucose meter"
+# query_vec = vectorizer.transform([query])
 #
-# app.layout = html.Div([
-#     dcc.Graph(figure=fig)
-# ])
-# if __name__ == '__main__':
-#     app.run_server(debug=False)
+# results = cosine_similarity(tfidf_scores, query_vec)
+# #print(results)
 #
+#
+# results_position = np.where(results)
+#
+# #print(results_position)
+# sorted = np.argsort(results[results_position])[::-1]  # descending order
+# #print("SORTED")
+# #print(sorted)
+# #print(" RESULT SORTED")
+# results_sorted = tuple(np.array(results_position)[:, sorted])
+# #print(results_sorted)
+# #print("COSINE SIMILARITY RESULTS SORTED")
+# cosine_similarity_sorted = results[results_sorted[0]]
+# #print(cosine_similarity_sorted)
+#
+# # print("ELEMENTS VALUES")
+# # print(results[169])
+# # print(results[149])
+# # print(results[279])
+#
+#
+# #print(len(results))
+# #print(len(data['Description']))
+#
+#
+# # results_nonzero = np.nonzero(results)[0]
+# # print(results_nonzero)
+#
+#
+# geocoding_results = []
+#
+# #print("Length Result Addresses: {}".format(len(results_nonzero)))
+#
+# # for i in results_nonzero:
+# for i in results_sorted[0]:
+#     similarity = results[i]
+#     similarity = str(similarity).replace('[', '').replace(']', '')
+#     #print(similarity)
+#     address = data.iloc[i, 0]
+#     locator = Nominatim(user_agent="myGeocoder")
+#     followers = data.iloc[i, 1]
+#     #print(address)
+#     #print(followers)
+#     following = data.iloc[i, 2]
+#     stars = data.iloc[i, 3]
+#     contributions = data.iloc[i, 4]
+#     # description = data.iloc[i, 5]
+#     url_profile = data.iloc[i, 6]
+#     # info
+#
+#     try:
+#         location = locator.geocode(address, timeout = 30)
+#         latitude = location.latitude
+#         longitude = location.longitude
+#         location = locator.reverse([latitude, longitude])
+#         #print(location.raw)
+#         display_name = location.raw['display_name']
+#         country = location.raw['address']['country']
+#         country_code = location.raw['address']['country_code']
+#         #print(location.raw)
+#     except AttributeError:
+#         # location = "NONE"
+#         latitude = None
+#         longitude = None
+#
+#     except KeyError:
+#         country = None
+#         country_code = None
+#     except NameError:
+#         #print("MPIKE")
+#         country = None
+#         country_code = None
+#
+#     finally:
+#         # print("Display Name = {}".format(display_name))
+#         # print("Latitude = {}, Longitude = {}".format(latitude, longitude))
+#         # print("Country = {}, Country Code = {}".format(country, country_code))
+#
+#         dictionary = {
+#             'Address': address,
+#             'Latitude': latitude,
+#             'Longitude': longitude,
+#             'Country': country,
+#             'Country_Code': country_code,
+#             'Followers'	: followers,
+#             'Following'	: following,
+#             'Stars'	: stars,
+#             'Contributions'	: contributions,
+#             #'Description': description
+#             'Url_profile'	: url_profile,
+#             'Similarity' : similarity
+#             #Info : info
+#
+#         }
+#         geocoding_results.append(dictionary)
+#
+# df = pd.DataFrame(geocoding_results)
+#
+# print("Followers Normalized")
+# norm_followers = normalize(df.Followers)
+# print(norm_followers.head())
+# df.Followers = norm_followers
+#
+# print("Following Normalized")
+# norm_following = normalize(df.Following)
+# print(norm_following.head())
+# df.Following = norm_following
+#
+# print("Stars Normalized")
+# norm_stars = normalize(df.Stars)
+# print(norm_stars.head())
+# df.Stars = norm_stars
+#
+# print("Contributions Normalized")
+# norm_contributions = normalize(df.Contributions)
+# print(norm_contributions.head())
+# df.Contributions = norm_contributions
+#
+# df.Weight = weight(df)
+#
+# print(df.head(10))
+#
+# #print("Length Dataframe: {}".format(df.size))
+# # print(df)
+# # print("DATAFRAME CREATED")
+#
+# df.to_csv('search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv')
+# print("CSV CREATED")
+#
+#
+# #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# #gdf = geopandas.GeoDataFrame(df, geometry=geopandas.points_from_xy(df.Longitude, df.Latitude))
+# # print(gdf)
+# # print("GEO DATAFRAME CREATED")
+# #world = geopandas.read_file(geopandas.datasets.get_path('naturalearth_lowres'))
+# # ax = world.plot(color='white', edgecolor='black')
+# # gdf.plot(ax=ax, color='blue')
+# # plt.show()
+#
+#
+# # plt.savefig("map_images/map_plot_NEW_DESC.jpeg")
+# # print("MAP 1 CREATED")
+#
+#
+# # ax = world.plot(color='white', edgecolor='black')
+# #
+# # gdf.plot(ax=ax, color='red')
+#
+# #plt.show()
+# #======================================================
+#
+# # similarity = np.asarray(df['Similarity'])
+# # #scheme = mapclassify.Quantiles(similarity, k=3)
+# #
+# # fig = geoplot.choropleth(
+# #         world, hue=similarity,
+# #         cmap='Greens', figsize=(8, 4)
+# #        )
+# # fig.show()
+#
+# # data = [dict(type = 'choropleth',
+# #             colorscale = 'Reds',
+# #             locations=df['Country_Code'], # Spatial coordinates
+# #             z = df['Similarity'].astype(float), # Data to be color-coded
+# #             locationmode = 'USA-states', # set of locations match entries in `locations
+# #             colorbar = {'title':"Cosine Similarity"},
+# #            )]
+# #
+# # layout = dict(title = 'No Title',
+# #               geo = dict(scope='usa', showlakes = True)) # limite map scope to USA)
+# #
+# # fig = dict( data=data, layout=layout )
+# # fig.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+# # fig.show()
+#
+#
+# path_to_file = 'custom.geo.json'
+# with open(path_to_file) as f:
+#     geo = geojson.load(f)
+#
+# fig = px.choropleth(data_frame=df,
+#                     geojson=geo,
+#                     locations='Country',
+#                     locationmode = 'country names',
+#                     color='Followers',
+#                     color_continuous_scale='Viridis',
+#                     range_color=(0, 1))
+# #fig.show()
+# fig.write_image("map_images/choropleth3_normalized_new.jpeg")
+#----------------------------------------------------------------------------------
+
