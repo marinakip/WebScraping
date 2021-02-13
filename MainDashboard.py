@@ -44,7 +44,7 @@ app.layout = html.Div([
                 dcc.Dropdown(
                     id = 'filter-category',
                     options = [{'label': i, 'value': i} for i in categories],
-                    value = 'Followers',
+                    placeholder = 'Select..',
                     clearable = False)
 
             ]), #DIV DROPDOWN CATEGORY
@@ -56,7 +56,7 @@ app.layout = html.Div([
             dcc.Dropdown(
                 id = 'filter-continent',
                 options = [{'label': i, 'value': i} for i in continents],
-                value = 'Europe',
+                placeholder = 'Select..',
                 clearable = False
             )
         ], style = {'width': '45%', 'font-size': '20px', 'display': 'inline-block'}), #DIV CONTINENT
@@ -68,7 +68,7 @@ app.layout = html.Div([
     html.Br(),
     html.Div([
         dcc.Graph(
-            id = 'world-map'
+            id = 'world-map',
         ),
 
         html.Br(),
@@ -86,52 +86,49 @@ app.layout = html.Div([
 
 
 @app.callback(
-        #dash.dependencies.Output('world-map', 'figure'),
         dash.dependencies.Output('world-map', 'figure'),
+        # [dash.dependencies.Output('world-map', 'figure'),
+        #  dash.dependencies.Output('cluster-plot', 'figure')],
         [
             dash.dependencies.Input('input-box', 'value'),
             dash.dependencies.Input('search-button', 'n_clicks'),
+            dash.dependencies.Input('filter-category', 'value'),
             dash.dependencies.State('input-box', 'value'),
-            dash.dependencies.Input('filter-category', 'value')
+            dash.dependencies.State('filter-category', 'value')
+
         ]
 )
 
 
-def update_graph(input_value, clicks, input_state, category):
+def update_graph(input_value, clicks, category, input_state, category_state):
+    #print("Category state: " + category_state)
+    #print("Category: " + category)
     #print(input_value)  #clicks 0, input value  None
-    if not clicks:
+    if not clicks and not category:
         raise dash.exceptions.PreventUpdate
-    if clicks > 0 or input_state is not None:
+    if clicks > 0 or input_state is not None and category_state is not None:
         print("clicks -- input value -- input state")
         print(clicks, input_value, input_state)
         print("search bar Text: {}".format(input_value))
         print("Searching...")
-        figure1, df = TextProssesing2.process_query(input_value)
-        figure2 = Clustering.clustering_with_weight(df, category)
-
-        print("figure ok1")
-        figure1.update_layout(margin = {"r": 0, "t": 0, "l": 0, "b": 0})
-        print("figure updated")
-        return figure1
+        # figure1, df = TextProssesing2.process_query(input_value)
+        df = TextProssesing2.process_query(input_value)
+        #print("figure 1 ok, df and category")
+        print(df.head(10))
+        print(category)
+        print("start figure clustering")
+        figure = Clustering.clustering_with_weight(df, category)
+        return figure
+        #print("figure 2 ok")
+        #print("figure 1 update")
+        #figure1.update_layout(margin = {"r": 0, "t": 0, "l": 0, "b": 0})
+        #print("figure 2 update")
+        #figure2.update_layout(margin = {"r": 0, "t": 0, "l": 0, "b": 0})
+        #print("all figures updated")
+        #return [figure1, figure2]
+        #return figure2
         #print(df)
 
-@app.callback(
-        #dash.dependencies.Output('world-map', 'figure'),
-        dash.dependencies.Output('cluster-plot', 'figure'),
-        [
-            #dash.dependencies.Input('input-box', 'value'),
-            #dash.dependencies.Input('search-button', 'n_clicks'),
-            #dash.dependencies.State('input-box', 'value'),
-        ]
-)
-
-def update_graph_cluster(df, column):
-    #print(input_value)  #clicks 0, input value  None
-        figure = Clustering.clustering_with_weight(df,column)
-        print("figure ok3")
-        figure.update_layout(margin = {"r": 0, "t": 0, "l": 0, "b": 0})
-        print("figure 2 updated")
-        return figure
 
 
 if __name__ == "__main__":

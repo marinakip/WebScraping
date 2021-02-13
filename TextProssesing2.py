@@ -187,7 +187,8 @@ def process_query(query):
                         range_color = (0, 1))
 
     #return df
-    return fig, df
+    #return fig, df
+    return df
 
 
 

@@ -10,6 +10,8 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 import seaborn as sns
 import re
+import geojson
+import plotly.express as px
 
 
 def elbow_method(array):
@@ -27,6 +29,7 @@ def elbow_method(array):
 
 
 def clustering(df, column):
+    df.dropna(inplace = True)
     df_array = df[f'{column}'].to_numpy()
     reshaped = np.array(df_array).reshape((len(df_array), 1))
     kmeans = KMeans(init = "random", n_clusters = 10, n_init = 100, max_iter = 1000)
@@ -48,16 +51,34 @@ def clustering(df, column):
     return figure
 
 def clustering_with_weight(df, column):
+    print("inside clustering")
+    df.dropna(inplace = True)
     kmeans = KMeans(init = "random", n_clusters = 10, n_init = 100, max_iter = 1000)
+    print("kmeans ok")
     cluster = kmeans.fit_predict(df[[f'{column}', 'Weight']])
+    print("cluster ok")
     df['Cluster'] = cluster
     centroids = kmeans.cluster_centers_
-    # print(df)
+    print(df.head(5))
     # print("CLUSTER CENTERS")
     # print(centroids)
-    plt.xlabel(f'{column}')
-    plt.ylabel('Weight')
-    figure = sns.scatterplot(data = df, x =f'{column}', y ='Weight')
+    ##plt.xlabel(f'{column}')
+    ##plt.ylabel('Weight')
+    print("before cluster figure ok")
+
+    path_to_file = 'custom.geo.json'
+    with open(path_to_file) as f:
+        geo = geojson.load(f)
+
+    figure = px.choropleth(data_frame = df,
+                        geojson = geo,
+                        locations = 'Country',
+                        locationmode = 'country names',
+                        color = 'Cluster',
+                        color_continuous_scale = 'Viridis',
+                        range_color = (0, 10))
+    ##figure = sns.scatterplot(data = df, x =f'{column}', y ='Weight')
+    print("cluster figure end ok")
     name = str(column)
     name = re.sub(r'\\', ' ', name)
     # print(name)
@@ -68,71 +89,74 @@ def clustering_with_weight(df, column):
 
 #df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY.csv")
 #df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized.csv")
-
-df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv")
-
-
-#df = df[['Followers', 'Following']]
-df.dropna(inplace=True)
-clustering(df, 'Followers')
-clustering(df, 'Following')
-clustering(df, 'Stars')
-clustering(df, 'Contributions')
-clustering(df, 'Weight')
-clustering_with_weight(df, 'Followers')
-clustering_with_weight(df, 'Following')
-clustering_with_weight(df, 'Stars')
-clustering_with_weight(df, 'Contributions')
-clustering_with_weight(df,  'Weight')
-# followers_array = df['Followers'].to_numpy()
-# temp = np.array(followers_array).reshape((len(followers_array), 1))
-# temp = scaler.transform(temp)
-# folloers.reshape(-1, 1)
-######elbow_method(temp)
-# print("DATAFRAME")
-#print(df)
-#print(df.head(5))
-
-#============================================================================
-#kmeans = KMeans(init="random", n_clusters=3, n_init=100, max_iter=1000)
-kmeans = KMeans(init="random", n_clusters=10, n_init=100, max_iter=1000)
-
-# #kmeans = KMeans(init="k-means++", n_clusters=3, n_init=10, max_iter=300, random_state=42)
-#kmeans.fit(scaled_df)
-#kmeans.fit(df)
-
-#cluster = kmeans.fit_predict(df[['Followers', 'Weight']])
-cluster = kmeans.fit_predict(temp)
-
-df['Cluster'] = cluster
-#print(cluster)
-print(df)
-# print("SSE")
-# sse = kmeans.inertia_
-# print(sse)
-# print("CLUSTER CENTERS")
+######+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv")
+#
+#
+# #df = df[['Followers', 'Following']]
+# df.dropna(inplace=True)
+# clustering(df, 'Followers')
+# clustering(df, 'Following')
+# clustering(df, 'Stars')
+# clustering(df, 'Contributions')
+# clustering(df, 'Weight')
+# clustering_with_weight(df, 'Followers')
+# clustering_with_weight(df, 'Following')
+# clustering_with_weight(df, 'Stars')
+# clustering_with_weight(df, 'Contributions')
+# clustering_with_weight(df,  'Weight')
+# # followers_array = df['Followers'].to_numpy()
+# # temp = np.array(followers_array).reshape((len(followers_array), 1))
+# # temp = scaler.transform(temp)
+# # folloers.reshape(-1, 1)
+# ######elbow_method(temp)
+# # print("DATAFRAME")
+# #print(df)
+# #print(df.head(5))
+#
+# #============================================================================
+# #kmeans = KMeans(init="random", n_clusters=3, n_init=100, max_iter=1000)
+# kmeans = KMeans(init="random", n_clusters=10, n_init=100, max_iter=1000)
+#
+# # #kmeans = KMeans(init="k-means++", n_clusters=3, n_init=10, max_iter=300, random_state=42)
+# #kmeans.fit(scaled_df)
+# #kmeans.fit(df)
+#
+# #cluster = kmeans.fit_predict(df[['Followers', 'Weight']])
+# cluster = kmeans.fit_predict(temp)
+#
+# df['Cluster'] = cluster
+# #print(cluster)
+# print(df)
+# # print("SSE")
+# # sse = kmeans.inertia_
+# # print(sse)
+# # print("CLUSTER CENTERS")
+# # centroids = kmeans.cluster_centers_
+# # print(centroids)
+# #========================================================================
+#
 # centroids = kmeans.cluster_centers_
+# print("CLUSTER CENTERS")
 # print(centroids)
-#========================================================================
+# # cluster_array = df['Cluster'].to_numpy()
+# # sb.violinplot(sb.violinplot(x=cluster_array, y=followers_array, data=df))
+# #clusters_plot = plt.scatter(df['Followers'], df['Weight'], c= kmeans.labels_.astype(float), s=50, label = 'Clusters')
+# #clusters_plot = plt.scatter(df['Followers'], df['Cluster'], c= kmeans.labels_.astype(float), s=50, label = 'Clusters')
+# sns.barplot(data = df, x='Cluster', y='Followers')
+# plt.show()
+# centers_plot = plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50, label = 'Centers')
+#
+# #plt.title('Clusters Followers vs Weight')
+# plt.xlabel('Followers')
+# plt.ylabel('Weight')
+# plt.legend(handles=[clusters_plot, centers_plot])
+# plt.show()
+# plt.savefig("map_images/clusters_plot_latitude_longitude_kmeans_with_arguments_normalized.jpeg")
+# #plt.savefig("map_images/clusters_plot_latitude_longitude_kmeans_no_arguments.jpeg")
 
-centroids = kmeans.cluster_centers_
-print("CLUSTER CENTERS")
-print(centroids)
-# cluster_array = df['Cluster'].to_numpy()
-# sb.violinplot(sb.violinplot(x=cluster_array, y=followers_array, data=df))
-#clusters_plot = plt.scatter(df['Followers'], df['Weight'], c= kmeans.labels_.astype(float), s=50, label = 'Clusters')
-#clusters_plot = plt.scatter(df['Followers'], df['Cluster'], c= kmeans.labels_.astype(float), s=50, label = 'Clusters')
-sns.barplot(data = df, x='Cluster', y='Followers')
-plt.show()
-centers_plot = plt.scatter(centroids[:, 0], centroids[:, 1], c='red', s=50, label = 'Centers')
+#####+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#plt.title('Clusters Followers vs Weight')
-plt.xlabel('Followers')
-plt.ylabel('Weight')
-plt.legend(handles=[clusters_plot, centers_plot])
-plt.show()
-plt.savefig("map_images/clusters_plot_latitude_longitude_kmeans_with_arguments_normalized.jpeg")
-#plt.savefig("map_images/clusters_plot_latitude_longitude_kmeans_no_arguments.jpeg")
 
 
 
