@@ -70,13 +70,20 @@ def clustering_with_weight(df, column):
     with open(path_to_file) as f:
         geo = geojson.load(f)
 
-    figure = px.choropleth(data_frame = df,
-                        geojson = geo,
-                        locations = 'Country',
-                        locationmode = 'country names',
-                        color = 'Cluster',
-                        color_continuous_scale = 'Viridis',
-                        range_color = (0, 10))
+    # figure = px.choropleth(data_frame = df,
+    #                     geojson = geo,
+    #                     locations = 'Country',
+    #                     locationmode = 'country names',
+    #                     color = 'Cluster',
+    #                     color_continuous_scale = 'Viridis',
+    #                     range_color = (0, 10))
+
+    figure = px.scatter_mapbox(data_frame = df, lat = "Latitude", lon = "Longitude",
+                            color = "Cluster", size = "Cluster",
+                            color_continuous_scale = px.colors.cyclical.IceFire,
+                            size_max = 70, zoom = 0.75, hover_name = 'Country',
+                            hover_data = ['Followers', 'Stars', 'Contributions', 'Url_profile'])
+    figure.update_layout(mapbox_style = "carto-positron")
     ##figure = sns.scatterplot(data = df, x =f'{column}', y ='Weight')
     print("cluster figure end ok")
     name = str(column)

@@ -66,18 +66,19 @@ app.layout = html.Div([
 
     ]), #DIV FILTERS
     html.Br(),
+    html.Br(),
     html.Div([
         dcc.Graph(
             id = 'world-map',
         ),
 
         html.Br(),
-        html.Br(),
-
-        dcc.Graph(
-            id = 'cluster-plot',
-            hoverData = {}
-        )
+        # html.Br(),
+        #
+        # dcc.Graph(
+        #     id = 'cluster-plot',
+        #     hoverData = {}
+        # )
 
     ], style = {'width': '100%', 'height': '90%', 'display': 'inline-block', 'padding': '0 20'}) #DIV GRAPHS
 
