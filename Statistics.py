@@ -2,6 +2,8 @@ import pandas as pd
 import csv
 import ast
 import re
+import glob
+import os
 
 
 def convertNumber(number):
@@ -19,11 +21,28 @@ def convertNumber(number):
         return number
 
 
-
+def combine_csv():
+    path = r'Scraping_Results_Yearly'
+    csv_list = glob.glob(path + "/**/*.csv", recursive = True)
+    csv_combined = pd.concat([pd.read_csv(f) for f in csv_list])
+    path = csv_list[0]
+    #print(path)
+    basename = os.path.basename(os.path.dirname(path))
+    #print(basename)
+    name = "combined_csv_{}".format(basename)
+    csv_combined.to_csv(name + '.csv', index = False)
+    #print("CSV COMBINED")
+    return name
 
 #data = pd.read_csv("merged_scraping_results.csv", header=None)
 #data = pd.read_csv("D:\WebScraping\Scraping_Results_Diabetes_Combined\combinedAll.csv", header=None)
-data = pd.read_csv("D:\WebScraping\scraping_results_diabetes_1000_NEW.csv", header=None)
+
+
+filename = combine_csv()
+
+data = pd.read_csv(filename + '.csv', header=None)
+#print(data.head(5))
+##data = pd.read_csv("D:\WebScraping\scraping_results_diabetes_1000_NEW.csv", header=None)
 #data.drop(data.tail(1).index, inplace=True)
 data.fillna('NONE', inplace=True)
 #print(data)
@@ -90,7 +109,8 @@ print(df)
 #df.to_csv('scraping_results_cleaned.csv', index=False, header=True)
 #df.to_csv('scraping_results_cleaned_diabetes_combinedAll.csv', index=False, header=True)
 #df.to_csv('scraping_results_cleaned_diabetes_1000.csv', index=False, header=True)
-df.to_csv('scraping_results_cleaned_diabetes_1000_2.csv', index=False, header=True)
+###df.to_csv('scraping_results_cleaned_diabetes_1000_2.csv', index=False, header=True)
+df.to_csv(filename + '_cleaned.csv', index=False, header=True)
 #print("CSV CREATED")
 
 

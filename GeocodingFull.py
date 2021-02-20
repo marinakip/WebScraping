@@ -2,13 +2,18 @@ import pandas as pd
 from geopy import Nominatim
 import time
 import random
+import glob
 
 #df = pd.read_csv("scraping_results_weighted.csv", header = 0)
 #df = pd.read_csv("scraping_results_cleaned_diabetes_combinedAll_weighted.csv", header = 0)
 #df = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv", header = 0)
-df = pd.read_csv("scraping_results_cleaned_diabetes_1000_2.csv", header = 0)
+###df = pd.read_csv("scraping_results_cleaned_diabetes_1000_2.csv", header = 0)
 
-
+csv = glob.glob("*_cleaned.csv")
+df = pd.read_csv(csv[0], header = 0)
+filename_list = csv[0].split(".")
+filename = filename_list[0]
+#print(filename)
 #print(df.head(10))
 
 data = df['Location']
@@ -85,7 +90,8 @@ df['Country_Code'] = country_code_list
 #df.to_csv('addresses_geocoded_weighted_full.csv', index=False, header=True)
 #df.to_csv('scraping_results_cleaned_diabetes_combinedAll_weighted_geocoded.csv', index=False, header=True)
 ##df.to_csv('scraping_results_cleaned_diabetes_1000_GEOCODED.csv', index=False, header=True)
-df.to_csv('scraping_results_cleaned_diabetes_1000_GEOCODED_2.csv', index=False, header=True)
+####df.to_csv('scraping_results_cleaned_diabetes_1000_GEOCODED_2.csv', index=False, header=True)
+df.to_csv(filename + '_geocoded.csv', index=False, header=True)
 print("CSV GEOCODING ADDRESSES FINAL CREATED")
 
 
