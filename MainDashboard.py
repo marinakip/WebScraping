@@ -16,6 +16,8 @@ import Clustering
 
 categories = ['Followers', 'Following', 'Stars', 'Contributions']
 continents = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America']
+programming_languages = ['Java', 'Python', 'R', 'JavaScript', 'Kotlin', 'Jupyter Notebook', 'TSQL', 'TypeScript',
+                            'MATLAB', 'Ruby', 'Objective C', 'C#', 'HTML']
 
 app = dash.Dash(__name__, title = 'GitHub\'s Users Location', external_stylesheets = [dbc.themes.SOLAR])
 
@@ -52,10 +54,10 @@ app.layout = html.Div([
         ], style = {'width': '45%', 'font-size': '20px', 'float': 'right', 'display': 'inline-block'}), #DIV CATEGORY
 
         html.Div([
-            html.Label('Cluster by Continent'),
+            html.Label('Cluster by Language'),
             dcc.Dropdown(
-                id = 'filter-continent',
-                options = [{'label': i, 'value': i} for i in continents],
+                id = 'filter-language',
+                options = [{'label': i, 'value': i} for i in programming_languages],
                 placeholder = 'Select..',
                 clearable = False
             )
@@ -68,9 +70,7 @@ app.layout = html.Div([
     html.Br(),
     html.Br(),
     html.Div([
-        dcc.Graph(
-            id = 'world-map',
-        ),
+        dbc.Spinner(dcc.Graph(id = 'world-map')),
 
         html.Br(),
         # html.Br(),

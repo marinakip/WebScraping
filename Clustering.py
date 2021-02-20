@@ -14,6 +14,46 @@ import geojson
 import plotly.express as px
 
 
+# def clustering_with_weight2new(df):
+#     df.dropna(inplace = True)
+#     kmeans = KMeans(init = "random", n_clusters = 4, n_init = 100, max_iter = 1000)
+#     cluster = kmeans.fit(df[['Followers', 'Following', 'Stars', 'Contributions']])
+#     print("cluster ok")
+#     df['Cluster'] = cluster
+#     centroids = kmeans.cluster_centers_
+#     print(df.head(5))
+#     fig2 = px.scatter_3d(df, x = "Following", y = "Followers", z = "Contributions",
+#                          color = "Stars")
+#     fig2.update_layout(title = "4 Features Representation")
+#     fig2.show()
+#     # print("CLUSTER CENTERS")
+#     # print(centroids)
+#     ##plt.xlabel(f'{column}')
+#     ##plt.ylabel('Weight')
+#     print("before cluster figure ok")
+#
+#     path_to_file = 'custom.geo.json'
+#     with open(path_to_file) as f:
+#         geo = geojson.load(f)
+#
+#     # figure = px.choropleth(data_frame = df,
+#     #                     geojson = geo,
+#     #                     locations = 'Country',
+#     #                     locationmode = 'country names',
+#     #                     color = 'Cluster',
+#     #                     color_continuous_scale = 'Viridis',
+#     #                     range_color = (0, 10))
+#
+#     figure = px.scatter_mapbox(data_frame = df, lat = "Latitude", lon = "Longitude",
+#                             color = "Cluster", size = "Cluster",
+#                             color_continuous_scale = px.colors.cyclical.IceFire,
+#                             size_max = 70, zoom = 0.75, hover_name = 'Country',
+#                             hover_data = ['Followers', 'Stars', 'Contributions', 'Url_profile'])
+#     figure.update_layout(mapbox_style = "carto-positron")
+#     ##figure = sns.scatterplot(data = df, x =f'{column}', y ='Weight')
+#
+#     return figure
+
 def elbow_method(array):
     Sum_of_squared_distances = []
     K = range(1,15)
@@ -97,8 +137,9 @@ def clustering_with_weight(df, column):
 #df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY.csv")
 #df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized.csv")
 ######+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv")
-#
+#####df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv")
+#####clustering_with_weight2new(df)
+
 #
 # #df = df[['Followers', 'Following']]
 # df.dropna(inplace=True)

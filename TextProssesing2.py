@@ -48,9 +48,10 @@ def get_part_of_speech(word):
 
 
 def clean_text(text):
-    words = re.sub(r'\\n', ' ', text)
-    cleaned = re.sub(r'\W+', ' ', words).lower()
-    tokenized = word_tokenize(cleaned)
+    # words = re.sub(r'\\n', ' ', text)
+    # cleaned = re.sub(r'\W+', ' ', words).lower()
+    # tokenized = word_tokenize(cleaned)
+    tokenized = word_tokenize(text)
     filtered = [word for word in tokenized if word not in stop_words and word in english]
     normalized = " ".join([lemmatizer.lemmatize(token, get_part_of_speech(token)) for token in filtered])
     return normalized
@@ -68,7 +69,9 @@ def weight(df):
     return df['Weight']
 
 def process_query(query):
-    data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
+    #data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
+    data = pd.read_csv("scraping_results_cleaned_diabetes_1000_GEOCODED_2.csv")
+
     cleaned_text = [clean_text(text) for text in data['Description']]
 
     vectorizer = TfidfVectorizer(norm = None)
@@ -84,66 +87,46 @@ def process_query(query):
 
     results_sorted = tuple(np.array(results_position)[:, sorted])
 
-    geocoding_results = []
+    all_results = []
 
-    print("GEOCODING RESULTS STARTED ")
+    print("SORTING RESULTS STARTED ")
 
     for i in results_sorted[0]:
         similarity = results[i]
         similarity = str(similarity).replace('[', '').replace(']', '')
         address = data.iloc[i, 0]
-        locator = Nominatim(user_agent = "myGeocoder")
+        #locator = Nominatim(user_agent = "myGeocoder")
         followers = data.iloc[i, 1]
         following = data.iloc[i, 2]
         stars = data.iloc[i, 3]
         contributions = data.iloc[i, 4]
         url_profile = data.iloc[i, 6]
         # info
+        longitude = data.iloc[i, 8]
+        latitude = data.iloc[i, 9]
+        country = data.iloc[i, 10]
+        country_code = data.iloc[i, 11]
 
-        try:
-            location = locator.geocode(address, timeout = 30)
-            latitude = location.latitude
-            longitude = location.longitude
-            location = locator.reverse([latitude, longitude])
 
-            display_name = location.raw['display_name']
-            country = location.raw['address']['country']
-            country_code = location.raw['address']['country_code']
+        dictionary = {
+            'Address': address,
+            'Latitude': latitude,
+            'Longitude': longitude,
+            'Country': country,
+            'Country_Code': country_code,
+            'Followers': followers,
+            'Following': following,
+            'Stars': stars,
+            'Contributions': contributions,
+            # 'Description': description
+            'Url_profile': url_profile,
+            'Similarity': similarity
+            # Info : info
 
-        except AttributeError:
+        }
+        all_results.append(dictionary)
 
-            latitude = None
-            longitude = None
-
-        except KeyError:
-            country = None
-            country_code = None
-        except NameError:
-
-            country = None
-            country_code = None
-
-        finally:
-
-            dictionary = {
-                'Address': address,
-                'Latitude': latitude,
-                'Longitude': longitude,
-                'Country': country,
-                'Country_Code': country_code,
-                'Followers': followers,
-                'Following': following,
-                'Stars': stars,
-                'Contributions': contributions,
-                # 'Description': description
-                'Url_profile': url_profile,
-                'Similarity': similarity
-                # Info : info
-
-            }
-            geocoding_results.append(dictionary)
-
-    df = pd.DataFrame(geocoding_results)
+    df = pd.DataFrame(all_results)
 
     print("NORMALIZATION OF RESULTS")
 
@@ -172,19 +155,19 @@ def process_query(query):
 
     # print(df.head(10))
 
-    print("PLOTTING CHOROPLETH")
-
-    path_to_file = 'custom.geo.json'
-    with open(path_to_file) as f:
-        geo = geojson.load(f)
-
-    fig = px.choropleth(data_frame = df,
-                        geojson = geo,
-                        locations = 'Country',
-                        locationmode = 'country names',
-                        color = 'Followers',
-                        color_continuous_scale = 'Viridis',
-                        range_color = (0, 1))
+    # print("PLOTTING CHOROPLETH")
+    #
+    # path_to_file = 'custom.geo.json'
+    # with open(path_to_file) as f:
+    #     geo = geojson.load(f)
+    #
+    # fig = px.choropleth(data_frame = df,
+    #                     geojson = geo,
+    #                     locations = 'Country',
+    #                     locationmode = 'country names',
+    #                     color = 'Followers',
+    #                     color_continuous_scale = 'Viridis',
+    #                     range_color = (0, 1))
 
     #return df
     #return fig, df

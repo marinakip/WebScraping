@@ -1,6 +1,7 @@
 import pandas as pd
 import csv
 import ast
+import re
 
 
 def convertNumber(number):
@@ -16,6 +17,8 @@ def convertNumber(number):
         return new_number
     else:
         return number
+
+
 
 
 #data = pd.read_csv("merged_scraping_results.csv", header=None)
@@ -37,9 +40,14 @@ for i in range(len(data.columns)):
             stats = cell_new['stats_list']
             contributions = cell_new['contributions']
             contributions_new = cell_new['contributions'].split()[0]
-            description = cell_new['description']
+            description_text = cell_new['description']
+            words = re.sub(r'\\n', ' ', str(description_text))
+            cleaned = re.sub(r'\W+', ' ', words).lower()
+            description = cleaned
             url_profile = cell_new['url_profile']
-            info = cell_new['info_list']
+            info = cell_new['info_list'][1]
+            #print(cleaned)
+            #print(info)
   #          print("Location: " + location)
   #          print("Stats: " + str(stats))
             try:
@@ -78,9 +86,11 @@ df = pd.DataFrame(list, columns=['Location', 'Followers', 'Following', 'Stars', 
                                  'Url_profile', 'Info'])
 print(df)
 
+
 #df.to_csv('scraping_results_cleaned.csv', index=False, header=True)
 #df.to_csv('scraping_results_cleaned_diabetes_combinedAll.csv', index=False, header=True)
-df.to_csv('scraping_results_cleaned_diabetes_1000.csv', index=False, header=True)
+#df.to_csv('scraping_results_cleaned_diabetes_1000.csv', index=False, header=True)
+df.to_csv('scraping_results_cleaned_diabetes_1000_2.csv', index=False, header=True)
 #print("CSV CREATED")
 
 
