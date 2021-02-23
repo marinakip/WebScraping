@@ -13,13 +13,13 @@ import Clustering
 # bootstrap =  "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/solar/bootstrap.min.css"
 # app = dash.Dash(external_stylesheets=[bootstrap])
 
-
+cluster_by = ['Feature', 'Weighted Feature', 'Auto Clustering']
 categories = ['Followers', 'Following', 'Stars', 'Contributions']
-continents = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America']
 programming_languages = ['Java', 'Python', 'R', 'JavaScript', 'Kotlin', 'Jupyter Notebook', 'TSQL', 'TypeScript',
                             'MATLAB', 'Ruby', 'Objective C', 'C#', 'HTML']
 
 app = dash.Dash(__name__, title = 'GitHub\'s Users Location', external_stylesheets = [dbc.themes.SOLAR])
+app.config.suppress_callback_exceptions = True
 
 app.layout = html.Div([
     html.H1(" Locations of GitHub Users", style = {'text-align': 'center'}),
@@ -41,27 +41,27 @@ app.layout = html.Div([
 
     html.Div([
         html.Div([
-            html.Div([
-                html.Label('Cluster by Category'),
+            html.Div(id = 'graph-container', children =[
+                html.Label('Cluster by'),
                 dcc.Dropdown(
-                    id = 'filter-category',
-                    options = [{'label': i, 'value': i} for i in categories],
+                    id = 'filter-clustering',
+                    options = [{'label': i, 'value': i} for i in cluster_by],
                     placeholder = 'Select..',
                     clearable = False)
 
-            ]), #DIV DROPDOWN CATEGORY
+            ]), #DIV DROPDOWN CLUSTERING
 
         ], style = {'width': '45%', 'font-size': '20px', 'float': 'right', 'display': 'inline-block'}), #DIV CATEGORY
 
-        html.Div([
-            html.Label('Cluster by Language'),
-            dcc.Dropdown(
-                id = 'filter-language',
-                options = [{'label': i, 'value': i} for i in programming_languages],
-                placeholder = 'Select..',
-                clearable = False
-            )
-        ], style = {'width': '45%', 'font-size': '20px', 'display': 'inline-block'}), #DIV CONTINENT
+        # html.Div([
+        #     html.Label('Cluster by Language'),
+        #     dcc.Dropdown(
+        #         id = 'filter-language',
+        #         options = [{'label': i, 'value': i} for i in programming_languages],
+        #         placeholder = 'Select..',
+        #         clearable = False
+        #     )
+        # ], style = {'width': '45%', 'font-size': '20px', 'display': 'inline-block'}), #DIV CONTINENT
 
         html.Div([])
 
@@ -70,6 +70,9 @@ app.layout = html.Div([
     html.Br(),
     html.Br(),
     html.Div([
+
+        #html.Div(dcc.Graph(id='hidden-graph', figure={'data': []}), style={'display': 'none'})
+
         dbc.Spinner(dcc.Graph(id = 'world-map')),
 
         html.Br(),
@@ -93,9 +96,9 @@ app.layout = html.Div([
         [
             dash.dependencies.Input('input-box', 'value'),
             dash.dependencies.Input('search-button', 'n_clicks'),
-            dash.dependencies.Input('filter-category', 'value'),
+            dash.dependencies.Input('filter-clustering', 'value'),
             dash.dependencies.State('input-box', 'value'),
-            dash.dependencies.State('filter-category', 'value')
+            dash.dependencies.State('filter-clustering', 'value')
 
         ]
 )
@@ -118,17 +121,10 @@ def update_graph(input_value, clicks, category, input_state, category_state):
         print(df.head(10))
         print(category)
         print("start figure clustering")
-        figure = Clustering.clustering_with_weight(df, category)
+        figure = Clustering.clustering_auto(df)
+        #figure = Clustering.clustering_with_weight(df, category)
         return figure
-        #print("figure 2 ok")
-        #print("figure 1 update")
-        #figure1.update_layout(margin = {"r": 0, "t": 0, "l": 0, "b": 0})
-        #print("figure 2 update")
-        #figure2.update_layout(margin = {"r": 0, "t": 0, "l": 0, "b": 0})
-        #print("all figures updated")
-        #return [figure1, figure2]
-        #return figure2
-        #print(df)
+
 
 
 
