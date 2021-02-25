@@ -19,9 +19,55 @@ import plotly.graph_objects as go
 from sklearn.cluster import MeanShift
 
 
+def cluster_and_plot(column, colors):
+    clusters, cluster_labels = clustering_by_feature(df, column)
+    figure = create_map(df, column, clusters, colors, cluster_labels)
+    return figure
+
+
 def clustering_by_feature(df, column):
     sorted_df_by_column = sort_by_column(df, column)
-    clusters = mean_shift_clustering(sorted_df_by_column, column)
+    clusters, cluster_labels = mean_shift_clustering(sorted_df_by_column, column)
+    return clusters, cluster_labels
+
+
+
+
+def create_map(df, column, clusters, colors, cluster_labels):
+    #clusters = list(clusters)
+    print("Clusters size: " + str(clusters))
+    figure = px.scatter_mapbox(data_frame = df, lat = "Latitude", lon = "Longitude",
+                               color = clusters.astype(str), size = column,
+                               size_max = 30, zoom = 0.75, hover_name = 'Country',
+                               title = 'Cluster by {}'.format(column),
+                               hover_data = ['Followers', 'Following', 'Stars', 'Contributions', 'Url_profile'])
+    figure.update_layout(mapbox_style = "carto-positron", legend_title_text='Cluster Info')
+    return figure
+
+
+def sort_by_column(df, column):
+    sorted_df = df.sort_values(f'{column}')
+    return sorted_df
+
+
+def mean_shift_clustering(df, column):
+    array = df[f'{column}'].to_numpy()
+    X = np.reshape(array, (-1, 1))
+    mean_shift = MeanShift(bandwidth = None, bin_seeding = True)
+    mean_shift.fit(X)
+    clusters = mean_shift.labels_
+    # centers = mean_shift.cluster_centers_
+
+    labels_unique = np.unique(clusters)
+    print("Unique clusters:" + str(labels_unique))
+    n_clusters_ = len(labels_unique)
+    print(column)
+    print("number of estimated clusters : %d" % n_clusters_)
+    print(clusters)
+    cluster_labels = list(labels_unique)
+    print("Cluster labels: " +str(cluster_labels))
+    return clusters, cluster_labels
+
 
 def clustering_auto(df):
     df.dropna(inplace = True)
@@ -31,19 +77,20 @@ def clustering_auto(df):
     kmeans.fit(X)
     cluster = kmeans.predict(X)
     centroids = kmeans.cluster_centers_
-    print(centroids)
+    # print(centroids)
     df['Cluster'] = cluster
-    #print(df)
+    # print(df)
     figure = px.scatter_mapbox(data_frame = df, lat = "Latitude", lon = "Longitude",
-                               color = 'Cluster', zoom = 0.75,
-                               #color_continuous_scale = px.colors.cyclical.IceFire,
+                               color = df['Cluster'].astype(str), zoom = 0.75,
+                               # color_continuous_scale = px.colors.cyclical.IceFire,
                                color_discrete_sequence = px.colors.qualitative.Bold,
                                hover_name = 'Country',
                                title = 'Auto Clustering',
                                hover_data = ['Followers', 'Following', 'Stars', 'Contributions', 'Url_profile'])
     figure.update_traces(mode = 'markers', marker_size = 12)
-    figure.update_layout(mapbox_style = "carto-positron", coloraxis_showscale=False)
+    figure.update_layout(mapbox_style = "carto-positron", legend_title_text='Cluster Info')
     return figure
+
 
 def clustering_auto_weighted(df, followers_weight, following_weight, stars_weight, contributions_weight):
     # followers_weight = 0.3
@@ -51,44 +98,28 @@ def clustering_auto_weighted(df, followers_weight, following_weight, stars_weigh
     # stars_weight = 0.5
     # contributions_weight = 3
 
-    df= weighted_dataframe(df, followers_weight, following_weight, stars_weight, contributions_weight)
+    df = weighted_dataframe(df, followers_weight, following_weight, stars_weight, contributions_weight)
     df.dropna(inplace = True)
     df_array = df[['Weighted_Following', 'Weighted_Followers',
-                  'Weighted_Stars', 'Weighted_Contributions']].to_numpy()
+                   'Weighted_Stars', 'Weighted_Contributions']].to_numpy()
     X = StandardScaler().fit_transform(df_array)
     kmeans = KMeans(init = "random", n_clusters = 5, n_init = 100, max_iter = 1000)
     kmeans.fit(X)
     cluster = kmeans.predict(X)
     centroids = kmeans.cluster_centers_
-    print(centroids)
+    # print(centroids)
     df['Cluster_Weighted'] = cluster
-    #print(df)
+    # print(df)
     figure = px.scatter_mapbox(data_frame = df, lat = "Latitude", lon = "Longitude",
-                               color = 'Cluster_Weighted', zoom = 0.75,
+                               color = df['Cluster_Weighted'].astype(str), zoom = 0.75,
                                color_continuous_scale = px.colors.qualitative.D3,
                                hover_name = 'Country',
                                title = 'Auto Clustering Weighted',
                                hover_data = ['Followers', 'Following', 'Stars', 'Contributions', 'Url_profile'])
     figure.update_traces(mode = 'markers', marker_size = 12)
-    figure.update_layout(mapbox_style = "carto-positron", coloraxis_showscale=False)
+    figure.update_layout(mapbox_style = "carto-positron", legend_title_text='Cluster Info')
     return figure
 
-
-def elbow_method(df):
-    df.dropna(inplace = True)
-    df_array = df[['Following', 'Followers', 'Stars', 'Contributions']].to_numpy()
-    X = StandardScaler().fit_transform(df_array)
-    Sum_of_squared_distances = []
-    K = range(1,15)
-    for k in K:
-        km = KMeans(n_clusters=k)
-        km = km.fit(X)
-        Sum_of_squared_distances.append(km.inertia_)
-    plt.plot(K, Sum_of_squared_distances, 'bx-')
-    plt.xlabel('k')
-    plt.ylabel('Sum_of_squared_distances')
-    plt.title('Elbow Method For Optimal k')
-    plt.show()
 
 def weighted_dataframe(df, followers_weight, following_weight, stars_weight, contributions_weight):
     weighted_followers = df['Followers'] * followers_weight
@@ -102,42 +133,6 @@ def weighted_dataframe(df, followers_weight, following_weight, stars_weight, con
     df['Weighted_Contributions'] = weighted_contributions
     return df
 
-def sort_by_column(df, column):
-    sorted_df = df.sort_values(f'{column}')
-    return sorted_df
-
-def mean_shift_clustering(df, column):
-    array = df[f'{column}'].to_numpy()
-    X = np.reshape(array, (-1, 1))
-    mean_shift = MeanShift(bandwidth = None, bin_seeding = True)
-    mean_shift.fit(X)
-    clusters = mean_shift.labels_
-    #centers = mean_shift.cluster_centers_
-
-    labels_unique = np.unique(clusters)
-    n_clusters_ = len(labels_unique)
-    print(column)
-    print("number of estimated clusters : %d" % n_clusters_)
-    print(clusters)
-    return clusters
-
-
-def create_map(df, column, clusters, colors):
-    figure = px.scatter_mapbox(data_frame = df, lat = "Latitude", lon = "Longitude",
-                              color = clusters, size = column,
-                              #color_continuous_scale = px.colors.cyclical.IceFire,
-                              color_discrete_sequence = colors,
-                              size_max = 30, zoom = 0.75, hover_name = 'Country',
-                              title = 'Cluster by {}'.format(column),
-                              hover_data = ['Followers', 'Following', 'Stars', 'Contributions', 'Url_profile'])
-    figure.update_layout(mapbox_style = "carto-positron")
-    return figure
-
-def cluster_and_plot(column, colors):
-    clusters = clustering_by_feature(df, column)
-    figure = create_map(df, column, clusters, colors)
-    return figure
-
 
 def cluster_and_plot_weighted(column, colors):
     followers_weight = 0.3
@@ -146,9 +141,27 @@ def cluster_and_plot_weighted(column, colors):
     contributions_weight = 3
 
     df_weighted = weighted_dataframe(df, followers_weight, following_weight, stars_weight, contributions_weight)
-    clusters_weighted = clustering_by_feature(df_weighted, column)
-    figure_weighted = create_map(df, column, clusters_weighted, colors)
+    clusters_weighted, cluster_labels = clustering_by_feature(df_weighted, column)
+    figure_weighted = create_map(df, column, clusters_weighted, colors, cluster_labels)
     return figure_weighted
+
+
+def elbow_method(df):
+    df.dropna(inplace = True)
+    df_array = df[['Following', 'Followers', 'Stars', 'Contributions']].to_numpy()
+    X = StandardScaler().fit_transform(df_array)
+    Sum_of_squared_distances = []
+    K = range(1, 15)
+    for k in K:
+        km = KMeans(n_clusters = k)
+        km = km.fit(X)
+        Sum_of_squared_distances.append(km.inertia_)
+    plt.plot(K, Sum_of_squared_distances, 'bx-')
+    plt.xlabel('k')
+    plt.ylabel('Sum_of_squared_distances')
+    plt.title('Elbow Method For Optimal k')
+    plt.show()
+
 
 
 # def clustering(df, column):
@@ -227,93 +240,90 @@ def cluster_and_plot_weighted(column, colors):
 #     #plt.savefig("map_images/clusters_with_weights_{}_kmeans_normalized.jpeg".format(name))
 #     return figure
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-# df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY.csv")
-# df.dropna(inplace = True)
-# #elbow_method(df)
-# figure_auto = clustering_auto(df)
-#
-# followers_weight = 0.3
-# following_weight = 2
-# stars_weight = 0.5
-# contributions_weight = 3
-# figure_auto_weighted = clustering_auto_weighted(df, followers_weight, following_weight, stars_weight,
-#                                                 contributions_weight)
-#
-# figure = cluster_and_plot('Following', px.colors.cyclical.IceFire)
-# figure_weighted = cluster_and_plot_weighted('Weighted_Following', px.colors.qualitative.Pastel)
-#
-# figure2 = cluster_and_plot('Followers', px.colors.qualitative.Antique)
-# figure_weighted2 = cluster_and_plot_weighted('Weighted_Followers', px.colors.sequential.Cividis)
-#
-# figure3 = cluster_and_plot('Stars', px.colors.qualitative.Alphabet)
-# figure_weighted3 = cluster_and_plot_weighted('Weighted_Stars', px.colors.qualitative.Prism)
-#
-# figure4 = cluster_and_plot('Contributions', px.colors.sequential.Magenta)
-# figure_weighted4 = cluster_and_plot_weighted('Weighted_Contributions', px.colors.qualitative.Prism)
-#
-#
-#
-# app = dash.Dash(__name__)
-#
-# app.layout = html.Div([
-#     dcc.Graph(id="graph", figure=figure),
-#
-#     html.Br(),
-#     html.Br(),
-#     dcc.Graph(id="graph2", figure=figure_weighted),
-#
-#     html.Br(),
-#     html.Br(),
-#     dcc.Graph(id="graph3", figure=figure2),
-#
-#     html.Br(),
-#     html.Br(),
-#     dcc.Graph(id="graph4", figure=figure_weighted2),
-#
-#     html.Br(),
-#     html.Br(),
-#     dcc.Graph(id="graph5", figure=figure3),
-#
-#     html.Br(),
-#     html.Br(),
-#     dcc.Graph(id="graph6", figure=figure_weighted3),
-#
-#     html.Br(),
-#     html.Br(),
-#     dcc.Graph(id="graph7", figure=figure4),
-#
-#     html.Br(),
-#     html.Br(),
-#     dcc.Graph(id="graph8", figure=figure_weighted4),
-#
-#     html.Br(),
-#     html.Br(),
-#     dcc.Graph(id="graph9", figure=figure_auto),
-#
-#     html.Br(),
-#     html.Br(),
-#     dcc.Graph(id="graph10", figure=figure_auto_weighted),
-#
-#
-# ])
-#
-# app.run_server(debug=True)
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY.csv")
+df.dropna(inplace = True)
+# elbow_method(df)
+figure_auto = clustering_auto(df)
 
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+followers_weight = 0.3
+following_weight = 2
+stars_weight = 0.5
+contributions_weight = 3
+figure_auto_weighted = clustering_auto_weighted(df, followers_weight, following_weight, stars_weight,
+                                                contributions_weight)
+
+figure = cluster_and_plot('Following', px.colors.carto.Magenta)
+figure_weighted = cluster_and_plot_weighted('Weighted_Following', px.colors.qualitative.Pastel)
+
+figure2 = cluster_and_plot('Followers', px.colors.qualitative.Antique)
+figure_weighted2 = cluster_and_plot_weighted('Weighted_Followers', px.colors.sequential.Cividis)
+
+figure3 = cluster_and_plot('Stars', px.colors.qualitative.Alphabet)
+figure_weighted3 = cluster_and_plot_weighted('Weighted_Stars', px.colors.qualitative.Prism)
+
+figure4 = cluster_and_plot('Contributions', px.colors.sequential.Magenta)
+figure_weighted4 = cluster_and_plot_weighted('Weighted_Contributions', px.colors.qualitative.Prism)
+
+app = dash.Dash(__name__)
+
+app.layout = html.Div([
+    dcc.Graph(id = "graph", figure = figure),
+
+    html.Br(),
+    html.Br(),
+    dcc.Graph(id = "graph2", figure = figure_weighted),
+
+    html.Br(),
+    html.Br(),
+    dcc.Graph(id = "graph3", figure = figure2),
+
+    html.Br(),
+    html.Br(),
+    dcc.Graph(id = "graph4", figure = figure_weighted2),
+
+    html.Br(),
+    html.Br(),
+    dcc.Graph(id = "graph5", figure = figure3),
+
+    html.Br(),
+    html.Br(),
+    dcc.Graph(id = "graph6", figure = figure_weighted3),
+
+    html.Br(),
+    html.Br(),
+    dcc.Graph(id = "graph7", figure = figure4),
+
+    html.Br(),
+    html.Br(),
+    dcc.Graph(id = "graph8", figure = figure_weighted4),
+
+    html.Br(),
+    html.Br(),
+    dcc.Graph(id = "graph9", figure = figure_auto),
+
+    html.Br(),
+    html.Br(),
+    dcc.Graph(id = "graph10", figure = figure_auto_weighted),
+
+])
+
+app.run_server(debug = True)
+
+# $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
-#df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized.csv")
+# df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized.csv")
 ######+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ########df = pd.read_csv("search_results_SORTED_DESCENDING_SIMILARITY_normalized_with_weight.csv")
 #####clustering_with_weight2new(df)
-#df.dropna(inplace = True)
-#data = df[['Following', 'Followers', 'Stars', 'Contributions']]
-#data = df['Following']
-#print(data.head(5))
+# df.dropna(inplace = True)
+# data = df[['Following', 'Followers', 'Stars', 'Contributions']]
+# data = df['Following']
+# print(data.head(5))
 ##X = StandardScaler().fit_transform(data)
-#print(X)
-#elbow_method(X)
+# print(X)
+# elbow_method(X)
 ##clustering_by_feature(X)
 
 #
@@ -380,12 +390,3 @@ def cluster_and_plot_weighted(column, colors):
 # #plt.savefig("map_images/clusters_plot_latitude_longitude_kmeans_no_arguments.jpeg")
 
 #####+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
-
-
-
-
-
-
