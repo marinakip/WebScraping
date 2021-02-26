@@ -20,28 +20,26 @@ from sklearn.cluster import MeanShift
 
 
 def cluster_and_plot(column, colors):
-    clusters, cluster_labels = clustering_by_feature(df, column)
-    figure = create_map(df, column, clusters, colors, cluster_labels)
+    clusters, cluster_labels, cluster_list_elements = clustering_by_feature(df, column)
+    figure = create_map(df, column, clusters, colors, cluster_labels, cluster_list_elements)
     return figure
 
 
 def clustering_by_feature(df, column):
     sorted_df_by_column = sort_by_column(df, column)
-    clusters, cluster_labels = mean_shift_clustering(sorted_df_by_column, column)
-    return clusters, cluster_labels
+    clusters, cluster_labels, cluster_list_elements = mean_shift_clustering(sorted_df_by_column, column)
+    return clusters, cluster_labels, cluster_list_elements
 
 
-
-
-def create_map(df, column, clusters, colors, cluster_labels):
-    #clusters = list(clusters)
+def create_map(df, column, clusters, colors, cluster_labels, cluster_list_elements):
+    # clusters = list(clusters)
     print("Clusters size: " + str(clusters))
     figure = px.scatter_mapbox(data_frame = df, lat = "Latitude", lon = "Longitude",
                                color = clusters.astype(str), size = column,
                                size_max = 30, zoom = 0.75, hover_name = 'Country',
                                title = 'Cluster by {}'.format(column),
                                hover_data = ['Followers', 'Following', 'Stars', 'Contributions', 'Url_profile'])
-    figure.update_layout(mapbox_style = "carto-positron", legend_title_text='Cluster Info')
+    figure.update_layout(mapbox_style = "carto-positron", legend_title_text = 'Cluster Number')
     return figure
 
 
@@ -56,17 +54,45 @@ def mean_shift_clustering(df, column):
     mean_shift = MeanShift(bandwidth = None, bin_seeding = True)
     mean_shift.fit(X)
     clusters = mean_shift.labels_
-    # centers = mean_shift.cluster_centers_
+    centers = mean_shift.cluster_centers_
+    #print("-----------------------")
+    # print(column)
+    # print("Centers")
+    # print(centers)
+
+    df['Cluster'] = clusters
 
     labels_unique = np.unique(clusters)
     print("Unique clusters:" + str(labels_unique))
-    n_clusters_ = len(labels_unique)
-    print(column)
-    print("number of estimated clusters : %d" % n_clusters_)
+    number_of_clusters = len(labels_unique)
+
+    print("number of estimated clusters : %d" % number_of_clusters)
     print(clusters)
     cluster_labels = list(labels_unique)
-    print("Cluster labels: " +str(cluster_labels))
-    return clusters, cluster_labels
+    print("Cluster labels: " + str(cluster_labels))
+
+    clusters_dictionary = {i: np.where(clusters == i)[0] for i in range(number_of_clusters)}
+    print(clusters_dictionary)
+
+    elements_in_clusters = []
+    for cluster_number in clusters_dictionary.keys():
+        #print("Cluster: %d" % cluster_number)
+        first = clusters_dictionary[cluster_number][0]
+        last = clusters_dictionary[cluster_number][-1]
+        # print("First: " + str(first))
+        # print(("Last: " + str(last)))
+
+        first_element = df[f'{column}'].iloc[first]
+        last_element = df[f'{column}'].iloc[last]
+        # print("First element: " + str(first_element))
+        # print(("Last element: " + str(last_element)))
+        cluster_list_elements = [column, cluster_number, first_element, last_element, centers]
+        elements_in_clusters.append(cluster_list_elements)
+
+    print('column, cluster_number, first_element, last_element, centers')
+    print(cluster_list_elements)
+    return clusters, cluster_labels, cluster_list_elements
+
 
 
 def clustering_auto(df):
@@ -79,6 +105,7 @@ def clustering_auto(df):
     centroids = kmeans.cluster_centers_
     # print(centroids)
     df['Cluster'] = cluster
+
     # print(df)
     figure = px.scatter_mapbox(data_frame = df, lat = "Latitude", lon = "Longitude",
                                color = df['Cluster'].astype(str), zoom = 0.75,
@@ -88,7 +115,7 @@ def clustering_auto(df):
                                title = 'Auto Clustering',
                                hover_data = ['Followers', 'Following', 'Stars', 'Contributions', 'Url_profile'])
     figure.update_traces(mode = 'markers', marker_size = 12)
-    figure.update_layout(mapbox_style = "carto-positron", legend_title_text='Cluster Info')
+    figure.update_layout(mapbox_style = "carto-positron", legend_title_text = 'Cluster Number')
     return figure
 
 
@@ -107,6 +134,7 @@ def clustering_auto_weighted(df, followers_weight, following_weight, stars_weigh
     kmeans.fit(X)
     cluster = kmeans.predict(X)
     centroids = kmeans.cluster_centers_
+
     # print(centroids)
     df['Cluster_Weighted'] = cluster
     # print(df)
@@ -117,7 +145,7 @@ def clustering_auto_weighted(df, followers_weight, following_weight, stars_weigh
                                title = 'Auto Clustering Weighted',
                                hover_data = ['Followers', 'Following', 'Stars', 'Contributions', 'Url_profile'])
     figure.update_traces(mode = 'markers', marker_size = 12)
-    figure.update_layout(mapbox_style = "carto-positron", legend_title_text='Cluster Info')
+    figure.update_layout(mapbox_style = "carto-positron", legend_title_text = 'Cluster Info')
     return figure
 
 
@@ -141,8 +169,8 @@ def cluster_and_plot_weighted(column, colors):
     contributions_weight = 3
 
     df_weighted = weighted_dataframe(df, followers_weight, following_weight, stars_weight, contributions_weight)
-    clusters_weighted, cluster_labels = clustering_by_feature(df_weighted, column)
-    figure_weighted = create_map(df, column, clusters_weighted, colors, cluster_labels)
+    clusters_weighted, cluster_labels, cluster_list_elements = clustering_by_feature(df_weighted, column)
+    figure_weighted = create_map(df, column, clusters_weighted, colors, cluster_labels, cluster_list_elements)
     return figure_weighted
 
 
@@ -161,7 +189,6 @@ def elbow_method(df):
     plt.ylabel('Sum_of_squared_distances')
     plt.title('Elbow Method For Optimal k')
     plt.show()
-
 
 
 # def clustering(df, column):
