@@ -41,7 +41,7 @@ app.layout = html.Div([
 
     html.Div([
         html.Div([
-            html.Div(id = 'graph-container', children =[
+            html.Div(id = 'filter-container', children =[
                 html.Label('Cluster by'),
                 dcc.Dropdown(
                     id = 'filter-clustering',
@@ -51,19 +51,28 @@ app.layout = html.Div([
 
             ]), #DIV DROPDOWN CLUSTERING
 
-        ], style = {'width': '45%', 'font-size': '20px', 'float': 'right', 'display': 'inline-block'}), #DIV CATEGORY
+        ], style = {'width': '45%', 'font-size': '20px', 'float': 'left', 'display': 'inline-block'}), #DIV CATEGORY
 
-        # html.Div([
-        #     html.Label('Cluster by Language'),
-        #     dcc.Dropdown(
-        #         id = 'filter-language',
-        #         options = [{'label': i, 'value': i} for i in programming_languages],
-        #         placeholder = 'Select..',
-        #         clearable = False
-        #     )
-        # ], style = {'width': '45%', 'font-size': '20px', 'display': 'inline-block'}), #DIV CONTINENT
+        html.Div([
+            html.Label('Select Feature'),
+            dcc.Dropdown(
+                id = 'filter-categories',
+                options = [],
+                placeholder = 'Select..',
+                clearable = False
+            )
+        ], style = {'width': '45%', 'font-size': '20px', 'float': 'right', 'display': 'inline-block'}), #DIV FEATURE
 
-        html.Div([])
+        html.Br(),
+        html.Div([
+            html.Br(),
+            dcc.Input(id="followers_weight", type="number", placeholder="Followers Weight"),
+            dcc.Input(id="following_weight", type="number", placeholder="Following Weight"),
+            dcc.Input(id="stars_weight", type="number", placeholder="Stars Weight"),
+            dcc.Input(id="contributions_weight", type="number", placeholder="Contributions Weight"),
+            #dcc.Input(id="input2", type="text", placeholder="", debounce=True),
+            html.Div(id="output"),
+        ], style = {'width': '65%', 'font-size': '20px', 'float': 'center', 'display': 'inline-block'})
 
 
     ]), #DIV FILTERS
@@ -83,10 +92,31 @@ app.layout = html.Div([
         #     hoverData = {}
         # )
 
-    ], style = {'width': '100%', 'height': '90%', 'display': 'inline-block', 'padding': '0 20'}) #DIV GRAPHS
+    ], style = {'width': '100%', 'height': '90%', 'display': 'inline-block','padding': '0 20'}) #DIV GRAPHS
 
 
 ])
+
+
+@app.callback(
+        dash.dependencies.Output('filter-categories', 'options'),
+        dash.dependencies.Input('filter-clustering', 'value')
+)
+def get_category(clustering_technique):
+    if not clustering_technique:
+        raise dash.exceptions.PreventUpdate
+
+    elif clustering_technique == 'Feature':
+        print("selected: " + str(clustering_technique))
+        print("Mpike")
+        return [{'label': i, 'value': i} for i in categories]
+    elif clustering_technique == 'Weighted Feature':
+        print("TO BE CONTINUED")
+        return [None]
+    else:
+        return [None]
+
+
 
 
 @app.callback(
@@ -96,9 +126,11 @@ app.layout = html.Div([
         [
             dash.dependencies.Input('input-box', 'value'),
             dash.dependencies.Input('search-button', 'n_clicks'),
-            dash.dependencies.Input('filter-clustering', 'value'),
+            #dash.dependencies.Input('filter-clustering', 'value'),
+            dash.dependencies.Input('filter-categories', 'value'),
             dash.dependencies.State('input-box', 'value'),
-            dash.dependencies.State('filter-clustering', 'value')
+            #dash.dependencies.State('filter-clustering', 'value')
+            dash.dependencies.State('filter-categories', 'value'),
 
         ]
 )
@@ -121,7 +153,7 @@ def update_graph(input_value, clicks, category, input_state, category_state):
         print(df.head(10))
         print(category)
         print("start figure clustering")
-        figure = Clustering.clustering_auto(df)
+        figure, df_cluster_elements_auto = Clustering.clustering_auto(df)
         #figure = Clustering.clustering_with_weight(df, category)
         return figure
 
