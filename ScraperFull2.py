@@ -51,11 +51,13 @@ start_day = 1
 end_year = 2021
 end_month = 1
 end_day = 1
-query = 'diabetes'
+#query = 'diabetes'
+query = 'regression'
 
-# path_name = "Scraping_Results_Yearly/{}-{}/".format(start_year, query)
-# if not os.path.exists(path_name):
-#     os.makedirs(path_name)
+path_name = "Scraping_Results_Yearly/{}-{}/".format(start_year, query)
+#path_name = "Scraping_Results_Yearly/{}{}{}-{}{}{}/".format(start_year, start_month, start_day, end_year, end_month, end_day, query)
+if not os.path.exists(path_name):
+    os.makedirs(path_name)
 
 link_list = create_start_url(start_year, start_month, start_day, end_year, end_month, end_day, query)
 
@@ -110,7 +112,7 @@ for item in range(len(link_list)):
 
         dataframe = pd.DataFrame(all_final_results_list)
         print(dataframe.head(5))
-        #dataframe.to_csv('{}scraping_results_week{}.csv'.format(path_name, count), index=False, header=False)
+        dataframe.to_csv('{}scraping_results_week{}.csv'.format(path_name, count), index=False, header=False)
         print("CSV FINAL CREATED")
     count += 1
 
