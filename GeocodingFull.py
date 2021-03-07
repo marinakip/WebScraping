@@ -76,7 +76,7 @@ for row in range(len(data)):
     country_list.append(country)
     country_code_list.append(country_code)
     #geocoding_results.append(dictionary)
-    # if counter%20 == 0:
+    # if counter%100 == 0:
     #     df_addresses = pd.DataFrame(geocoding_results)
     #     df_addresses.to_csv('addresses_geocoded_temp_weighted.csv')
     #     print("CSV GEOCODING ADDRESSES TEMP CREATED")

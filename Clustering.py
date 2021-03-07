@@ -21,7 +21,7 @@ import plotly.graph_objects as go
 from sklearn.cluster import MeanShift
 
 
-def cluster_and_plot(column, colors):
+def cluster_and_plot(df, column, colors):
     clusters, cluster_labels, df_cluster_elements = clustering_by_feature(df, column)
     figure = create_map(df, column, clusters, colors, cluster_labels, df_cluster_elements)
     return figure, df_cluster_elements
@@ -75,8 +75,8 @@ def mean_shift_clustering(df, column):
 
     elements_in_clusters = get_cluster_elements(centers, clusters, column, df, number_of_clusters)
 
-    df_cluster_elements = DataFrame(elements_in_clusters, columns = ['Column', 'Cluster Number', 'First Element',
-                                                                     'Last Element', 'Cluster Centers'])
+    df_cluster_elements = DataFrame(elements_in_clusters, columns = ['Feature Name', 'Cluster Number', 'Min Value',
+                                                                     'Max Value', 'Cluster Centers'])
     print(df_cluster_elements['Cluster Centers'])
     return clusters, cluster_labels, df_cluster_elements
 
@@ -137,9 +137,9 @@ def clustering_auto(df):
     elements_in_clusters_auto = get_cluster_elements_auto(centers, clusters, column, df, number_of_clusters,
                                                           column_name)
 
-    df_cluster_elements_auto = DataFrame(elements_in_clusters_auto, columns = ['Column', 'Cluster Number',
-                                                                               'First Element',
-                                                                               'Last Element', 'Cluster Centers'])
+    df_cluster_elements_auto = DataFrame(elements_in_clusters_auto, columns = ['Feature Name', 'Cluster Number',
+                                                                               'Min Value','Max Value',
+                                                                               'Cluster Centers'])
     print(df_cluster_elements_auto['Cluster Centers'])
 
     print("==================================================================")
@@ -219,8 +219,8 @@ def clustering_auto_weighted(df, followers_weight, following_weight, stars_weigh
                                                           column_name)
 
     df_cluster_elements_auto_weighted = DataFrame(elements_in_clusters_auto,
-                                                  columns = ['Column', 'Cluster Number', 'First Element',
-                                                             'Last Element', 'Cluster Centers'])
+                                                  columns = ['Feature Name', 'Cluster Number', 'Min Value',
+                                                                     'Max Value', 'Cluster Centers'])
     print(df_cluster_elements_auto_weighted['Cluster Centers'])
 
     print("==================================================================")

@@ -36,15 +36,15 @@ lemmatizer = WordNetLemmatizer()
 english = set(nltk.corpus.words.words())
 
 
-def get_part_of_speech(word):
-    probable_part_of_speech = wordnet.synsets(word)
-    pos_counts = Counter()
-    pos_counts["n"] = len([item for item in probable_part_of_speech if item.pos() == "n"])
-    pos_counts["v"] = len([item for item in probable_part_of_speech if item.pos() == "v"])
-    pos_counts["a"] = len([item for item in probable_part_of_speech if item.pos() == "a"])
-    pos_counts["r"] = len([item for item in probable_part_of_speech if item.pos() == "r"])
-    most_likely_part_of_speech = pos_counts.most_common(1)[0][0]
-    return most_likely_part_of_speech
+# def get_part_of_speech(word):
+#     probable_part_of_speech = wordnet.synsets(word)
+#     pos_counts = Counter()
+#     pos_counts["n"] = len([item for item in probable_part_of_speech if item.pos() == "n"])
+#     pos_counts["v"] = len([item for item in probable_part_of_speech if item.pos() == "v"])
+#     pos_counts["a"] = len([item for item in probable_part_of_speech if item.pos() == "a"])
+#     pos_counts["r"] = len([item for item in probable_part_of_speech if item.pos() == "r"])
+#     most_likely_part_of_speech = pos_counts.most_common(1)[0][0]
+#     return most_likely_part_of_speech
 
 
 def clean_text(text):
@@ -53,7 +53,8 @@ def clean_text(text):
     # tokenized = word_tokenize(cleaned)
     tokenized = word_tokenize(text)
     filtered = [word for word in tokenized if word not in stop_words and word in english]
-    normalized = " ".join([lemmatizer.lemmatize(token, get_part_of_speech(token)) for token in filtered])
+    #normalized = " ".join([lemmatizer.lemmatize(token, get_part_of_speech(token)) for token in filtered])
+    normalized = " ".join([lemmatizer.lemmatize(token) for token in filtered])
     return normalized
 
 def normalize(df):
@@ -73,6 +74,11 @@ def process_query(query):
     data = pd.read_csv("scraping_results_cleaned_diabetes_1000_GEOCODED_2.csv")
 
     cleaned_text = [clean_text(text) for text in data['Description']]
+
+    # data['Description'] = cleaned_text
+    # print(data[data['Description'].str.contains(query)])
+
+
 
     vectorizer = TfidfVectorizer(norm = None)
     tfidf_scores = vectorizer.fit_transform(cleaned_text)
@@ -128,31 +134,32 @@ def process_query(query):
 
     df = pd.DataFrame(all_results)
 
-    print("NORMALIZATION OF RESULTS")
-
-    # print("Followers Normalized")
-    norm_followers = normalize(df.Followers)
-    # print(norm_followers.head())
-    df.Followers = norm_followers
-
-    # print("Following Normalized")
-    norm_following = normalize(df.Following)
-    # print(norm_following.head())
-    df.Following = norm_following
-
-    # print("Stars Normalized")
-    norm_stars = normalize(df.Stars)
-    # print(norm_stars.head())
-    df.Stars = norm_stars
-
-    # print("Contributions Normalized")
-    norm_contributions = normalize(df.Contributions)
-    # print(norm_contributions.head())
-    df.Contributions = norm_contributions
-
-    print("WEIGHT")
-    df.Weight = weight(df)
-
+    ###########################################
+    # print("NORMALIZATION OF RESULTS")
+    #
+    # # print("Followers Normalized")
+    # norm_followers = normalize(df.Followers)
+    # # print(norm_followers.head())
+    # df.Followers = norm_followers
+    #
+    # # print("Following Normalized")
+    # norm_following = normalize(df.Following)
+    # # print(norm_following.head())
+    # df.Following = norm_following
+    #
+    # # print("Stars Normalized")
+    # norm_stars = normalize(df.Stars)
+    # # print(norm_stars.head())
+    # df.Stars = norm_stars
+    #
+    # # print("Contributions Normalized")
+    # norm_contributions = normalize(df.Contributions)
+    # # print(norm_contributions.head())
+    # df.Contributions = norm_contributions
+    #
+    # print("WEIGHT")
+    # df.Weight = weight(df)
+    ########################################
     # print(df.head(10))
 
     # print("PLOTTING CHOROPLETH")
@@ -175,6 +182,9 @@ def process_query(query):
 
 
 
+# query = 'neural network'
+# #query = query.split()
+# process_query(query)
 # #-------------------------------------------------------------------------------------
 # data = pd.read_csv("scraping_results_cleaned_diabetes_1000.csv")
 # cleaned_text = [clean_text(text) for text in data['Description']]

@@ -48,11 +48,14 @@ def create_start_url(year1, month1, day1, year2, month2, day2, query):
 start_year = 2020
 start_month = 1
 start_day = 1
-end_year = 2021
+end_year = 2020
 end_month = 1
 end_day = 1
 #query = 'diabetes'
-query = 'regression'
+#query = 'regression'
+#query = 'robotics'
+#query = 'artificial+intelligence'
+
 
 path_name = "Scraping_Results_Yearly/{}-{}/".format(start_year, query)
 #path_name = "Scraping_Results_Yearly/{}{}{}-{}{}{}/".format(start_year, start_month, start_day, end_year, end_month, end_day, query)

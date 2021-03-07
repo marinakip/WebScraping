@@ -51,7 +51,7 @@ app.layout = html.Div([
 
             ]),  # DIV DROPDOWN CLUSTERING
 
-        ], style = {'width': '45%', 'font-size': '20px', 'float': 'left', 'display': 'inline-block'}),  # DIV CATEGORY
+        ], style = {'width': '25%', 'font-size': '20px', 'float': 'left', 'display': 'inline-block'}),  # DIV CATEGORY
 
         html.Div(id = 'feature-container', children = [
             html.Label('Select Feature'),
@@ -61,18 +61,19 @@ app.layout = html.Div([
                 placeholder = 'Select..',
                 clearable = True
             )
-        ], style = {'width': 'auto', 'font-size': '20px', 'float': 'right', 'display': 'none'}),  # DIV FEATURE
+        ], style = {'width': 'auto', 'font-size': '20px', 'float': 'left', 'display': 'none'}),  # DIV FEATURE
 
         html.Br(),
+        #html.Br(),
         html.Div(id = 'input-weights', children = [
-            html.Br(),
+            #html.Br(),
             dcc.Input(id = "followers_weight", type = "number", placeholder = "Followers Weight"),
             dcc.Input(id = "following_weight", type = "number", placeholder = "Following Weight"),
             dcc.Input(id = "stars_weight", type = "number", placeholder = "Stars Weight"),
             dcc.Input(id = "contributions_weight", type = "number", placeholder = "Contributions Weight"),
             # dcc.Input(id="input2", type="text", placeholder="", debounce=True),
             html.Div(id = "output"),
-        ], style = {'width': 'auto', 'font-size': '20px', 'float': 'right', 'display': 'none'})
+        ], style = {'width': 'auto', 'font-size': '20px', 'float': 'left', 'display': 'none'})
 
     ]),  # DIV FILTERS
     html.Br(),
@@ -86,17 +87,19 @@ app.layout = html.Div([
 
         html.Br(),
         html.Br(),
-        html.Div(dash_table.DataTable(id = "table",
-                                      columns = [],
-                                      data = [],
-                                      style_header = {'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
-                                      style_data_conditional = [{
-                                          'if': {'row_index': 'odd'},
-                                          'backgroundColor': 'rgb(248, 248, 248)'
-                                      }]
-                                      )
 
-                 ),
+        html.Div(id = 'table-container', children = [
+            dash_table.DataTable(id = "table",
+                                 columns = [],
+                                 data = [],
+                                 style_header = {'backgroundColor': 'rgb(230, 230, 230)', 'fontWeight': 'bold'},
+                                 style_data_conditional = [{
+                                     'if': {'row_index': 'odd'},
+                                     'backgroundColor': 'rgb(248, 248, 248)'
+                                 }]
+                                 )
+
+        ]),
 
     ], style = {'width': '100%', 'height': '90%', 'display': 'inline-block', 'padding': '0 20'})  # DIV GRAPHS
 
@@ -107,7 +110,6 @@ app.layout = html.Div([
     dash.dependencies.Output('feature-container', 'style'),
     dash.dependencies.Output('filter-categories', 'options'),
     dash.dependencies.Output('input-weights', 'style'),
-    # dash.dependencies.Output('graph-container', 'style'),
     dash.dependencies.Input('filter-clustering', 'value')
 )
 def style_categories(clustering_technique):
@@ -125,20 +127,24 @@ def style_categories(clustering_technique):
     elif clustering_technique == 'Weighted Feature':
         print("WEIGHTED_FEATURE")
         style_categories = {'width': '65%', 'font-size': '20px', 'float': 'center', 'display': 'none'}
-        style_weights = {'width': '65%', 'font-size': '20px', 'float': 'center', 'display': 'inline-block'}
+        style_weights = {'width': 'auto', 'font-size': '20px', 'float': 'left', 'display': 'inline-block',
+                         'padding-top': '5px'}
         # style_graph = {'display': 'block'}
         categories_list = []
         return style_categories, categories_list, style_weights
     else:
-
-        return [None]
+        style_categories = {'width': '65%', 'font-size': '20px', 'float': 'center', 'display': 'none'}
+        style_weights = {'width': '65%', 'font-size': '20px', 'float': 'center', 'display': 'none'}
+        # style_graph = {'display': 'block'}
+        categories_list = []
+        return style_categories, categories_list, style_weights
 
 
 @app.callback(
     # dash.dependencies.Output('graph-container', 'style'),
     dash.dependencies.Output('table', 'columns'),
     dash.dependencies.Output('table', 'data'),
-    # dash.dependencies.Output('table', 'style_cell_conditional'),
+    dash.dependencies.Output('table-container', 'style'),
     # dash.dependencies.Output('table', 'style_data_conditional'),
     # dash.dependencies.Output('table', 'style_header'),
     dash.dependencies.Output('world-map', 'figure'),
@@ -149,58 +155,89 @@ def style_categories(clustering_technique):
     [
         dash.dependencies.Input('input-box', 'value'),
         dash.dependencies.Input('search-button', 'n_clicks'),
-        # dash.dependencies.Input('filter-clustering', 'value'),
         dash.dependencies.Input('filter-categories', 'value'),
+        dash.dependencies.Input('filter-clustering', 'value'),
+        dash.dependencies.Input('followers_weight', 'value'),
+        dash.dependencies.Input('following_weight', 'value'),
+        dash.dependencies.Input('stars_weight', 'value'),
+        dash.dependencies.Input('contributions_weight', 'value'),
         dash.dependencies.State('input-box', 'value'),
         # dash.dependencies.State('filter-clustering', 'value')
         dash.dependencies.State('filter-categories', 'value'),
+        dash.dependencies.State('filter-clustering', 'value'),
 
     ]
 )
-def update_graph(input_value, clicks, category, input_state, category_state):
+def update_graph(input_value, clicks, category, clustering, followers_weight, following_weight, stars_weight,
+                 contributions_weight, input_state, category_state, clustering_state):
     # print("Category state: " + category_state)
     # print("Category: " + category)
     # print(input_value)  #clicks 0, input value  None
+    print(clustering)
+    print(clustering_state)
     if not clicks and not category:
         raise dash.exceptions.PreventUpdate
-    if clicks > 0 or input_state is not None and category_state is not None:
+    if clicks > 0 or input_state is not None and category_state is not None and clustering_state is not None:
         # print("clicks -- input value -- input state")
         # print(clicks, input_value, input_state)
         # print("search bar Text: {}".format(input_value))
+        print(clustering)
+        print(clustering_state)
         print("Searching...")
         # figure1, df = TextProssesing2.process_query(input_value)
         df = TextProssesing2.process_query(input_value)
         # print("figure 1 ok, df and category")
         # print(df.head(10))
         # print(category)
-        print("start figure clustering")
-        figure, df_cluster_elements_auto = Clustering.clustering_auto(df)
-        columns = [{'name': i, 'id': i} for i in df_cluster_elements_auto.columns]
-        data = df_cluster_elements_auto.to_dict('records')
+        if clustering == 'Weighted Feature':
+            figure, df_cluster_elements_auto_weighted = Clustering.clustering_auto_weighted(df, followers_weight,
+                                                                                            following_weight,
+                                                                                            stars_weight,
+                                                                                            contributions_weight)
+            columns = [{'name': i, 'id': i} for i in df_cluster_elements_auto_weighted.columns]
+            data = df_cluster_elements_auto_weighted.to_dict('records')
+            style = {'width': '100%', 'height': '90%', 'display': 'none', 'padding': '0 20'}
+            return columns, data, style, figure
+
+        if clustering == 'Auto Clustering':
+            figure, df_cluster_elements_auto = Clustering.clustering_auto(df)
+            columns = [{'name': i, 'id': i} for i in df_cluster_elements_auto.columns]
+            data = df_cluster_elements_auto.to_dict('records')
+            style = {'width': '100%', 'height': '90%', 'display': 'none', 'padding': '0 20'}
+            return columns, data, style, figure
+        # print("start figure clustering")
+        if category == 'Following':
+            figure, df_cluster_elements = Clustering.cluster_and_plot(df, 'Following', px.colors.carto.Magenta)
+            columns = [{'name': i, 'id': i} for i in df_cluster_elements.columns]
+            data = df_cluster_elements.to_dict('records')
+            style = {'width': '100%', 'height': '90%', 'display': 'inline-block', 'padding': '0 20'}
+            return columns, data, style, figure
+        elif category == 'Followers':
+            figure, df_cluster_elements = Clustering.cluster_and_plot(df, 'Followers', px.colors.carto.Magenta)
+            columns = [{'name': i, 'id': i} for i in df_cluster_elements.columns]
+            data = df_cluster_elements.to_dict('records')
+            style = {'width': '100%', 'height': '90%', 'display': 'inline-block', 'padding': '0 20'}
+            return columns, data, style, figure
+        elif category == 'Stars':
+            figure, df_cluster_elements = Clustering.cluster_and_plot(df, 'Stars', px.colors.carto.Magenta)
+            columns = [{'name': i, 'id': i} for i in df_cluster_elements.columns]
+            data = df_cluster_elements.to_dict('records')
+            style = {'width': '100%', 'height': '90%', 'display': 'inline-block', 'padding': '0 20'}
+            return columns, data, style, figure
+        elif category == 'Contributions':
+            figure, df_cluster_elements = Clustering.cluster_and_plot(df, 'Contributions', px.colors.carto.Magenta)
+            columns = [{'name': i, 'id': i} for i in df_cluster_elements.columns]
+            data = df_cluster_elements.to_dict('records')
+            style = {'width': '100%', 'height': '90%', 'display': 'inline-block', 'padding': '0 20'}
+            return columns, data, style, figure
+
+        # figure, df_cluster_elements_auto = Clustering.clustering_auto(df)
+        # columns = [{'name': i, 'id': i} for i in df_cluster_elements_auto.columns]
+        # data = df_cluster_elements_auto.to_dict('records')
 
         # figure = Clustering.clustering_with_weight(df, category)
         # style_graph = {'display': 'inline-block'}
-        return columns, data, figure
-
-
-#
-# @app.callback(
-#     dash.dependencies.Output('table', 'columns'),
-#     dash.dependencies.Output('table', 'data'),
-#     dash.dependencies.Input('hidden-div', 'children'),
-# )
-#
-# def update_table(df_table):
-#     if df_table.empty:
-#         raise dash.exceptions.PreventUpdate
-#     print("inside table")
-#     print(df_table.head(10))
-#     columns = [{'name': i, 'id': i} for i in df_table.columns]
-#     data = df_table.to_dict('records')
-#     return columns, data
-#
-#
-#
+        # return columns, data, figure
 
 
 if __name__ == "__main__":
