@@ -1,6 +1,6 @@
 # WebScraping
 
-This repository contains all the files of my diploma thesis at the Computer Science Department, University of Ioannina, Greece
+This repository contains my diploma thesis at the Computer Science Department, University of Ioannina, Greece
 
 This thesis has a target of creating a recommendation system using GitHub 's data with geo visualization of results. It offers the user the opportunity to search information 
 about GitHub’s repositories along with statistics about its users and their contribution and impact to the software community. Also, it offers some more precise information 
